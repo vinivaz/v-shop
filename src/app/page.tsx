@@ -1,103 +1,176 @@
+
+// Components
 import Image from "next/image";
+import { RatingStars } from "./Components/RatingStars";
+import { Product } from "./Components/Product";
 
-export default function Home() {
+import { EmblaCarousel } from "./Components/CarouselTest";
+
+// Firebase
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/services/firebase";
+
+// Services
+import { listAllProducts } from "@/services/products";
+
+
+type Variations = {
+  color?: string,
+  picture: string,
+  price: number,
+  stock: number,
+
+}
+
+type Product = {
+  id: string,
+  brand: string,
+  category: string,
+  description: string,
+  name: string,
+  picture: string,
+  variations: Variations[],
+}
+
+type FirstPageProps = {
+  smartphones: Product[],
+  videogames: Product[],
+  watches: Product[],
+  headphones: Product[]
+}
+
+
+const listVariations = async (productId: string) => {
+  const variationsRef = collection(db, "product", productId, "variations");
+  const snapshot = await getDocs(variationsRef);
+  
+  const variations = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  const productRef = collection(db, "product")
+
+  const productSnapshot = await getDocs(productRef);
+
+  const products = productSnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  console.log(variations);
+};
+
+export default async function Home() {
+
+  // const test = await listVariations("YRdBwLjPwkwzDITh5yF1")
+
+  const products = await listAllProducts()
+
+  console.log(products)
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+  <div className="w-full max-w-[1120px] flex flex-col justify-center">
+    <div
+      className="w-full h-full max-h-[417.24px] flex justify-center items-start"
+    >
+      <div className="w-full relative flex justify-center items-center ">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+          className="z-1 absolute object-contain "
+          src="/ad/smartphones-hero-background.png"
+          width={1120}
+          height={359.64}
+          alt="hero image background"
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+        <div className="z-2 w-full max-h-[417.24px] flex items-center justify-center">
+          <div>
+            <h1
+              className="text-white font-[Zen_Dots] text-3xl max-w-[311.9px] w-full max-[880px]:text-2xl max-[880px]:max-w-[270px] max-[750px]:text-xl max-[750px]:leading-5 max-[750px]:max-w-[200px]"
+            >
+              Ut enim ad minim veniam
+            </h1>
+            <p
+              className="max-w-[310px] w-full text-white text-wrap text-sm my-2 max-[880px]:text-xs max-[880px]:my-1 max-[880px]:max-w-[205px]"
+            >
+              All this running around, try to cover my shadows, something trying to get out, but all the others seem shalow
+            </p>
+            <button
+              className="text-white py-2 mt-5 px-17 rounded-2xl bg-lighter max-[880px]:mt-3 max-[800px]:py-1 max-[800px]:px-13 max-[800px]:rounded-lg max-[650px]:text-xs"
+            >
+              Conferir
+            </button>
+          </div>
+          <div className="h-full w-[33%]">
+          <img
+            className="object-contain w-full "
+            src="/ad/smartphone-hero-image.png"
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            alt="smartphone image"
+    
+          />          
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      </div>
     </div>
+
+    <div
+      className="w-full flex flex-row justify-between my-5"
+    >
+      <div>
+        <Image
+          src="/ad/videogames-mini-ad-background.png"
+          width={259.82}
+          height={222.41}
+          quality={100}
+          alt="mini ad background image"
+        />
+      </div>
+
+      <div>
+        <Image
+          src="/ad/smartphones-mini-ad-background.png"
+          width={259.82}
+          height={222.41}
+          quality={100}
+          alt="mini ad background image"
+        />
+      </div>
+      <div>
+        <Image
+          src="/ad/watches-mini-ad-background.png"
+          width={259.82}
+          height={222.41}
+          quality={100}
+          alt="mini ad background image"
+        />
+      </div>
+            <div>
+        <Image
+          src="/ad/headphones-mini-ad-background.png"
+          width={259.82}
+          height={222.41}
+          quality={100}
+          alt="mini ad background image"
+        />
+      </div>
+    </div>
+
+    <div
+      className="w-full my-8 "
+    >
+      <div
+        className="w-full h-full flex flex-col "
+      >
+        <h3>Smartphones</h3>
+        <EmblaCarousel/>
+      </div>
+    </div>
+  </div>
+    
   );
 }
+
+
+
+
