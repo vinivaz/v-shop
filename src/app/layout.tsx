@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-void flex items-center flex-col h-screen justify-between">
+      <body className="bg-void flex items-center flex-col h-full justify-between pt-[45px]">
         <Header/>
         {children}
         <Footer/>

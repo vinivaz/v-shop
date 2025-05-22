@@ -1,6 +1,6 @@
 "use client"
  
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 type SelectedImage = {
@@ -9,17 +9,20 @@ type SelectedImage = {
 };
 
 type Props = {
-  onImagesChange: (images:SelectedImage[]) => void;
+  onImagesChange: (images: SelectedImage[]) => void;
+  initialImages?: SelectedImage[];
 };
 
 
-export function ImagesSelector({onImagesChange}: Props){
+export function ImagesSelector({ onImagesChange, initialImages = [] }: Props){
 
-  const [ images, setImages ] = useState<SelectedImage[]>([]);
+  const [images, setImages] = useState<SelectedImage[]>(initialImages);
   const [isDragging, setIsDragging] = useState(false);
-  useEffect(()=> {
-    onImagesChange(images)
-  },[images])
+
+  useEffect(() => {
+    onImagesChange(images);
+  }, [images]);
+
 
   const handleSelectFile = async(event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()
@@ -43,7 +46,7 @@ export function ImagesSelector({onImagesChange}: Props){
   }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); // necessário para permitir drop
+    e.preventDefault();
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -96,10 +99,15 @@ export function ImagesSelector({onImagesChange}: Props){
               className="relative rounded-xl max-h-[68px] m-2"
             >
               <span
-                className="absolute -top-2 -right-2 text-white text-sm rounded-md bg-darker"
+                className="absolute -top-2 -right-2 rounded-md bg-lighter p-1"
                 onClick={() => handleRemoveImage(index)}
               >
-                &#x2716;
+                <Image
+                  src="/icons/light-close-icon.svg"
+                  width={10}
+                  height={10}
+                  alt="close icon"
+                />
               </span>
               <div
                 className="max-w-[50px] max-h-[50px] h-full rounded-xl overflow-hidden bg-[#D9D9D9]"
@@ -117,7 +125,7 @@ export function ImagesSelector({onImagesChange}: Props){
           ))
         ) : (
           <div
-            className=" flex justify-center items-center w-full m-2 text-dark-text font-medium"
+            className=" flex justify-center items-center w-full m-2 text-fading-text font-medium"
           >
             <p className="text-sm">Arraste imagens aqui</p>
           </div>

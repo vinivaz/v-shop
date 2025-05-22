@@ -18,7 +18,10 @@ model Product {
   name        String
   description String
   category    String
-  brand       String
+  stock       Int
+  price       Float
+  mainImage   String?      // URL da imagem principal
+  additionalImages String[] // URLs das imagens adicionais
   variations  Variation[]
   createdAt   DateTime     @default(now())
 }
@@ -29,11 +32,7 @@ model Variation {
   productId String   @db.ObjectId
 
   name      String
-  image     String
   images    String[]
-
-  size      String
-  color     String
   price     Float
   stock     Int
 }

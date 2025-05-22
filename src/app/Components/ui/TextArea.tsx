@@ -2,19 +2,13 @@
 
 import { TextareaHTMLAttributes } from "react";
 
-
-
 type TextareaProps = {
   label?: string;
-  showMessageOnInput?: boolean;
 } & TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 
 export function TextArea(props:TextareaProps){
-  const { value, label, ...rest } = props;
-
-  const showSpan = typeof value === "string" && value.trim() !== "";
-
+  const {label, ...rest } = props;
   return(
     <div className=" w-full my-1">
       {label && <label className="ml-3 pb-2 text-sm font-medium">{label}</label>}
