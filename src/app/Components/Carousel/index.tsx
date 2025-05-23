@@ -10,7 +10,23 @@ import Image from 'next/image';
 // Style
 import "./Carousel.css"
 
-export function EmblaCarousel() {
+type ProductType = {
+  _id: string,
+  name: string,
+  slug: string,
+  category: string,
+  price: number,
+  stock: number,
+  description: string,
+  mainImage?: string,
+  additionalImages: string[],
+};
+
+type CarouselProps = {
+  products: ProductType[];
+}
+
+export function Carousel({products}: CarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel()
 
 
@@ -27,9 +43,9 @@ export function EmblaCarousel() {
     <div className="relative">
       <div className="embla" ref={emblaRef}>
         <div className="embla__container">
-          {[...Array(5)].map((_, index) => (
+          {products.map((product, index) => (
             <div key={index} className="embla__slide">
-              <Product rating={5}/>
+              <Product data={product} rating={5}/>
             </div>
           ))}
         </div>

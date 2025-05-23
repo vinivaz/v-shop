@@ -1,73 +1,48 @@
+"use server"
 
 // Components
 import Image from "next/image";
 import { RatingStars } from "./Components/RatingStars";
 import { Product } from "./Components/Product";
 
-import { EmblaCarousel } from "./Components/CarouselTest";
-
-// Firebase
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/services/firebase";
-
-// Services
-import { listAllProducts } from "@/services/products";
+import { Carousel } from "./Components/Carousel";
+import { getProducts } from "@/lib/api/products";
 
 
 type Variations = {
-  color?: string,
-  picture: string,
-  price: number,
-  stock: number,
+  name: string,
+  stock: number
+  price: number;
+  images: string[]
+}[]
 
-}
+
 
 type Product = {
-  id: string,
-  brand: string,
-  category: string,
-  description: string,
+  _id: string,
   name: string,
-  picture: string,
-  variations: Variations[],
+  slug: string,
+  category: string,
+  price: number,
+  stock: number,
+  description: string,
+  mainImage?: string,
+  additionalImages: string[],
 }
 
 type FirstPageProps = {
   smartphones: Product[],
-  videogames: Product[],
-  watches: Product[],
+  consoles: Product[],
+  smartwatches: Product[],
   headphones: Product[]
 }
 
 
-const listVariations = async (productId: string) => {
-  const variationsRef = collection(db, "product", productId, "variations");
-  const snapshot = await getDocs(variationsRef);
-  
-  const variations = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
 
-  const productRef = collection(db, "product")
-
-  const productSnapshot = await getDocs(productRef);
-
-  const products = productSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-
-  console.log(variations);
-};
 
 export default async function Home() {
+  const products : FirstPageProps  = await getProducts()
 
-  // const test = await listVariations("YRdBwLjPwkwzDITh5yF1")
-
-  const products = await listAllProducts()
-
-  console.log(products)
 
   return (
   <div className="w-full max-w-[1120px] flex flex-col justify-center">
@@ -162,8 +137,28 @@ export default async function Home() {
       <div
         className="w-full h-full flex flex-col "
       >
-        <h3>Smartphones</h3>
-        <EmblaCarousel/>
+        <h3 className="font-medium text-lg py-5">Smartphones</h3>
+        <Carousel products={products.smartphones}/>
+      </div>
+
+      <div
+        className="w-full h-full flex flex-col "
+      >
+        <h3 className="font-medium text-lg py-5">Videogames</h3>
+        <Carousel products={products.consoles}/>
+      </div>
+      <div
+        className="w-full h-full flex flex-col "
+      >
+        <h3 className="font-medium text-lg py-5">Smartwatches</h3>
+        <Carousel products={products.smartwatches}/>
+      </div>
+
+      <div
+        className="w-full h-full flex flex-col "
+      >
+        <h3 className="font-medium text-lg py-5">Headphones</h3>
+        <Carousel products={products.headphones}/>
       </div>
     </div>
   </div>

@@ -6,12 +6,25 @@ import { faHeart as emptyHeart } from "@fortawesome/free-solid-svg-icons";
 import { RatingStars } from "../RatingStars";
 
 
-type StarRatingProps = {
-  rating: number;
+type ProductType = {
+  _id: string,
+  name: string,
+  slug: string,
+  category: string,
+  price: number,
+  stock: number,
+  description: string,
+  mainImage?: string,
+  additionalImages: string[],
 };
 
+type ProductProps = {
+  rating: number,
+  data: ProductType;
+}
 
-export function Product({rating}:StarRatingProps){
+
+export function Product({rating, data}:ProductProps){
   return(
     <div
       className=" max-w-[208px] w-full h-[364px]"
@@ -19,12 +32,17 @@ export function Product({rating}:StarRatingProps){
       <div
         className="max-w-[208px] w-full max-h-[208px] h-full bg-product-bg flex justify-center items-center rounded-t-xl"
       >
-        <Image
-          src="/products/iphone16e.png"
+        {data.mainImage &&(
+          <Image
+          className="object-cover max-w-[90px] w-full"
+          src={data.mainImage}
           width={75}
           height={75}
-          alt="iphone16e"
+          alt={data.name}
+          quality={100}
         />
+        )}
+        
       </div>
       <div
         className="w-full flex flex-col justify-evenly p-2 rounded-b-xl min-h-[156px] bg-white"
@@ -40,9 +58,9 @@ export function Product({rating}:StarRatingProps){
         <p
           className="leading-4 font-semibold text-dark-text"
         >
-          Apple iPhone 16e 128GB Branco 6,1" 48MP iOS 5G
+          {data.name}
         </p>
-        <span className="font-medium text-dark-text py-0.5">R$ 4000.00</span>
+        <span className="font-medium text-dark-text py-0.5">R$ {data.price}</span>
         <span className="text-xs font-medium text-green-500 py-0.5">R$ 3800 no PIX</span>
         <div className="flex gap-1">
           <button

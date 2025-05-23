@@ -1,5 +1,5 @@
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { storage } from '@/services/firebase';
+import { storage } from '@/services/firebase/firebase';
 import { v4 } from 'uuid';
 
 export const uploadFile = async (file: File, path: string): Promise<string> => {

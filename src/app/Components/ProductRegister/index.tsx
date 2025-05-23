@@ -14,7 +14,7 @@ import { Controller } from "react-hook-form";
 import { useForm, useFieldArray } from "react-hook-form";
 
 // Firebase Actions
-import { uploadFile, uploadMultipleImages } from "@/lib/firebase/storageService";
+import { uploadFile, uploadMultipleImages } from "@/services/firebase/storageService";
 
 type SelectedImage = {
   file: File;
@@ -166,10 +166,10 @@ export function ProductRegister(){
             }})}
           >
             <option value="default" disabled>Choose the category</option>
-            <option value="smartphones">smartphone</option>
-            <option value="videogames">videogames</option>
-            <option value="watches">watches</option>
-            <option value="headphones">headphones</option>
+            <option value="smartphone">Smartphone</option>
+            <option value="console">Console</option>
+            <option value="smartwatch">Smartwatch</option>
+            <option value="headphone">Headphone</option>
           </SelectOptions>
           
           <div

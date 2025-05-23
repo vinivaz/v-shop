@@ -1,9 +1,12 @@
-import { EmblaCarousel } from "../Components/CarouselTest"
+import { Carousel } from "../Components/Carousel";
+import { getProducts } from "@/lib/api/products";
 
-export default function Cart(){
+export default async function Cart(){
+    const products  = await getProducts()
+
   return(
     <div>
-      <EmblaCarousel/>
+      <Carousel products={products.headphones}/>
     </div>
   )
 }

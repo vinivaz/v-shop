@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { deleteImageFromFirebase } from "@/lib/firebase/storageService";
+import { deleteImageFromFirebase } from "@/services/firebase/storageService";
 
 
 export async function GET(
