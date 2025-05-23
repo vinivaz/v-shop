@@ -1,51 +1,24 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // o caminho pode variar
-
-type FormData = {
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  description: string;
-  mainImage?: string; // imagem principal já com URL
-  additionalImages?: string[]; // imagens adicionais
-  variations?: {
-    name: string;
-    stock: string;
-    price: string;
-    images: string[];
-  }[];
-}
+import { prisma } from '@/lib/prisma';
 
 type UnparsedVariation = {
-    name: string;
-    stock: string;
-    price: string;
-    images: string[];
-  };
+  name: string;
+  stock: string;
+  price: string;
+  images: string[];
+};
 
 type Variation = {
-    name: string;
-    stock: number;
-    price: number;
-    images: string[];
-  };
-
-type Variations = {
-    name: string;
-    stock: number;
-    price: number;
-    images: string[];
-  }[];
+  name: string;
+  stock: number;
+  price: number;
+  images: string[];
+};
 
 export async function POST(request: Request) {
-  const {
+  try{
 
-      price,
-      stock,
-      variations,
-      ...body
-    } = await request.json()
+    const { price, stock, variations, ...body } = await request.json()
 
     const parsedPrice = parseFloat(price);
     const parsedStock = parseInt(stock);
@@ -57,9 +30,7 @@ export async function POST(request: Request) {
       images: variation.images,
     }));
 
-  try {
     const product = await prisma.product.create({
-
       data: {
         name: body.name,
         description: body.description,
@@ -85,3 +56,4 @@ export async function POST(request: Request) {
     return new NextResponse('Erro ao criar produto', { status: 500 });
   }
 }
+

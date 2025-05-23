@@ -1,78 +1,40 @@
-"use client"
- 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-
 type SelectedImage = {
   file: File;
   dataURL: string;
 };
 
-type Props = {
-  onImagesChange: (images: SelectedImage[]) => void;
-  initialImages?: SelectedImage[];
+type ImagesSelectorProps = {
+  value: SelectedImage[];
+  onChange: (images: SelectedImage[]) => void;
 };
 
+import Image from "next/image";
 
-export function ImagesSelector({ onImagesChange, initialImages = [] }: Props){
-
-  const [images, setImages] = useState<SelectedImage[]>(initialImages);
-  const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    onImagesChange(images);
-  }, [images]);
-
-
-  const handleSelectFile = async(event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault()
-
-    const files = event.target.files;
+export function ImagesSelector({ value = [], onChange }: ImagesSelectorProps) {
+  
+  const handleAddImage = (files: FileList | null) => {
     if (!files) return;
 
     const validFiles = Array.from(files).filter(file =>
       file.type.startsWith("image/")
     );
 
-    validFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImages(prev => [...prev, { file, dataURL: reader.result as string }])
-      };
-      reader.readAsDataURL(file);
-    });
+    const newImages = Array.from(validFiles).map((file) => ({
+      file,
+      dataURL: URL.createObjectURL(file),
+    }));
 
-    event.target.value = "";
-  }
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+    onChange([...value, ...newImages]);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const files = Array.from(e.dataTransfer.files).filter(file =>
-      file.type.startsWith("image/")
-    );
-
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImages(prev => [...prev, { file, dataURL: reader.result as string }]);
-      };
-      reader.readAsDataURL(file);
-    });
+  const handleRemoveImage = (index: number) => {
+    const updatedImages = value.filter((_, i) => i !== index);
+    onChange(updatedImages);
   };
 
-  function handleRemoveImage(indexToRemove: number) {
-    setImages(prev => prev.filter((_, index) => index !== indexToRemove));
-  }
-
-  return(
+  return (
     <div className="w-full my-2">
-      <label >
+            <label >
         <div className="px-2 size-fit border rounded-lg border-[#DDDDDD]  my-2">
           add
         </div>
@@ -82,18 +44,22 @@ export function ImagesSelector({ onImagesChange, initialImages = [] }: Props){
           name="image"
           accept="image/png, image/jpg, image/gif, image/jpeg"
           multiple
-          onChange={handleSelectFile}
+          onChange={(e) => {
+            handleAddImage(e.target.files)
+            e.target.value = "";
+          }}
         />
       </label>
       <div
         className="w-full flex flex-row bg-[#FBFBFB] border-2 border-[#D3D3D3] border-dashed rounded-xl max-h-[68px] h-full"
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onDragEnter={() => setIsDragging(true)}
-        onDragLeave={() => setIsDragging(false)}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault()
+          handleAddImage(e.dataTransfer.files)
+        }}
       >
-        {images.length > 0 ? (
-          images.map((image, index) => (
+        {value.length > 0 ? (
+          value.map((image, index) => (
             <div
               key={index}
               className="relative rounded-xl max-h-[68px] m-2"
@@ -119,8 +85,7 @@ export function ImagesSelector({ onImagesChange, initialImages = [] }: Props){
                   height={50}
                   alt={`Preview ${index}`}
                 />
-              </div>
-              
+              </div>   
             </div>
           ))
         ) : (
@@ -130,8 +95,7 @@ export function ImagesSelector({ onImagesChange, initialImages = [] }: Props){
             <p className="text-sm">Arraste imagens aqui</p>
           </div>
         )}
-      
       </div>
     </div>
-  )
+  );
 }

@@ -20,8 +20,8 @@ model Product {
   category    String
   stock       Int
   price       Float
-  mainImage   String?      // URL da imagem principal
-  additionalImages String[] // URLs das imagens adicionais
+  mainImage   String?      
+  additionalImages String[]
   variations  Variation[]
   createdAt   DateTime     @default(now())
 }

@@ -1,4 +1,4 @@
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '@/services/firebase';
 import { v4 } from 'uuid';
 
@@ -18,3 +18,15 @@ export const uploadMultipleImages = async (
 
   return Promise.all(uploads);
 };
+
+export const deleteImageFromFirebase  = async(fileUrl : string) => {
+
+  try{
+
+    const fileRef = ref(storage, fileUrl);
+    await deleteObject(fileRef)
+    
+  }catch(error){
+    console.log(error)
+  }
+}

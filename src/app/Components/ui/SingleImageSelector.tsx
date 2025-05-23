@@ -63,6 +63,10 @@ export function SingleImagesSelector({value, onChange}: Props){
 
   };
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault(); // necessário para permitir drop
+  };
+
   return(
     <div className="relative flex flex-col my-2">
       {value && <span
@@ -82,6 +86,7 @@ export function SingleImagesSelector({value, onChange}: Props){
         value ? "bg-[#F4F4F4]" : "bg-[#FBFBFB] border-2 border-[#D3D3D3] border-dashed"
         }`}
         onDrop={handleDrop}
+        onDragOver={handleDragOver}
         onDragEnter={() => setIsDragging(true)}
         onDragLeave={() => setIsDragging(false)}
       >
