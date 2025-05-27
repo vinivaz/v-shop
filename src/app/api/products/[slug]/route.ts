@@ -5,14 +5,14 @@ import { deleteImageFromFirebase } from "@/services/firebase/storageService";
 
 export async function GET(
   request:Request,
-  { params }: { params: Promise<{ id: string }>}
+  { params }: { params: Promise<{ slug: string }>}
 ) {
   try{
 
-    const { id: productId } = await params;
+    const { slug } = await params;
 
     const product = await prisma.product.findUnique({
-      where: { id: productId },
+      where: { slug: slug },
       include: { variations: true },
     });
 
@@ -20,7 +20,7 @@ export async function GET(
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json({ product }, { status: 200 });
+    return NextResponse.json(product, { status: 200 });
 
   }catch(error){
     console.log(error)

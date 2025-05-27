@@ -29,8 +29,9 @@ export function Product({rating, data}:ProductProps){
     <div
       className=" max-w-[208px] w-full h-[364px]"
     >
-      <div
+      <a
         className="max-w-[208px] w-full max-h-[208px] h-full bg-product-bg flex justify-center items-center rounded-t-xl"
+        href={`products/${data.slug}`}
       >
         {data.mainImage &&(
           <Image
@@ -43,7 +44,7 @@ export function Product({rating, data}:ProductProps){
         />
         )}
         
-      </div>
+      </a>
       <div
         className="w-full flex flex-col justify-evenly p-2 rounded-b-xl min-h-[156px] bg-white"
       >
@@ -55,11 +56,12 @@ export function Product({rating, data}:ProductProps){
             <span className="font-semibold">5.0 (15635)</span>
           </div>
         </div>
-        <p
+        <a
           className="leading-4 font-semibold text-dark-text"
+          href={`products/${data.slug}`}
         >
           {data.name}
-        </p>
+        </a>
         <span className="font-medium text-dark-text py-0.5">R$ {data.price}</span>
         <span className="text-xs font-medium text-green-500 py-0.5">R$ 3800 no PIX</span>
         <div className="flex gap-1">
