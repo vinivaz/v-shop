@@ -47,7 +47,6 @@ export async function DELETE(
 
     const allImagesUrls = [
       ...(product.mainImage? [product.mainImage]: []),
-      ...product.additionalImages,
       ...product.variations.flatMap(v => v.images),
     ]
 

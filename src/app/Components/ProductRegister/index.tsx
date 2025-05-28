@@ -24,12 +24,14 @@ type SelectedImage = {
 type FormData = {
   name: string,
   category: string,
-  price: string,
-  stock: string,
+  // price: string,
+  // stock: string,
   description: string,
-  mainImage?: SelectedImage,
-  additionalImages: SelectedImage[],
+  // mainImage?: SelectedImage,
+  // images: SelectedImage[],
   variations: {
+    // mainImage: SelectedImage,
+    main: boolean,
     name: string,
     stock: string,
     price: string;
@@ -38,18 +40,16 @@ type FormData = {
 }
 
 type ReadyData = {
-  name: string,
-  category: string,
-  price: string,
-  stock: string,
-  description: string,
-  mainImage?: string,
-  additionalImages: string[],
+  name: string;
+  category: string;
+  description: string;
+  mainImage?: string;
   variations: {
-    name: string,
-    stock: string,
+    main: boolean;
+    name: string;
+    stock: string;
     price: string;
-    images: string[]
+    images: string[];
   }[]
 }
 
@@ -57,12 +57,18 @@ export function ProductRegister(){
   const initialFormValues = {
     name: '',
     category: 'default',
-    price: '',
-    stock: '',
+    // price: '',
+    // stock: '',
     description: '',
     mainImage: undefined,
-    additionalImages: [],
-    variations: [],
+    // additionalImages: [],
+    variations: [{
+      main: true,
+      name: "",
+      stock: "0",
+      price: "0",
+      images: []
+    }],
   }
 
   const { register, handleSubmit, control, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
@@ -77,13 +83,13 @@ export function ProductRegister(){
   const onSubmit = async(data: FormData) => {
     console.log(data)
     try{
-      const mainImageUrl = data.mainImage
-      ? await uploadFile(data.mainImage.file, 'product_image')
-      : undefined;
+      // const mainImageUrl = data.mainImage
+      // ? await uploadFile(data.mainImage.file, 'product_image')
+      // : undefined;
 
-      const additionalImageUrls = data.additionalImages
-      ? await uploadMultipleImages(data.additionalImages, 'product_image')
-      : [];
+      // const additionalImageUrls = data.additionalImages
+      // ? await uploadMultipleImages(data.additionalImages, 'product_image')
+      // : [];
 
       const variations = await Promise.all(
         (data.variations || []).map(async (variation, index) => {
@@ -93,9 +99,7 @@ export function ProductRegister(){
           );
 
           return {
-            name: variation.name,
-            price: variation.price,
-            stock: variation.stock,
+            ...variation,
             images: uploadedVariationImages,
           };
         })
@@ -105,8 +109,8 @@ export function ProductRegister(){
         method: 'POST',
         body: JSON.stringify({
           ...data,
-          mainImage: mainImageUrl,
-          additionalImages: additionalImageUrls,
+          mainImage: variations[0].images[0],
+          // additionalImages: additionalImageUrls,
           variations
         }),
         headers: {
@@ -127,7 +131,7 @@ export function ProductRegister(){
       className="max-w-[680px] w-full p-6 flex bg-white rounded-lg my-5"
     >
       <div className="w-full flex flex-row h-full max-[521px]:flex-col">
-        <div
+        {/* <div
           className="min-[521px]:max-w-[200px] w-full flex flex-col max-[521px]:justify-center max-[521px]:mb-7"
         >
           <Controller
@@ -140,6 +144,7 @@ export function ProductRegister(){
               />
             )}
           />
+
           <Controller
             control={control}
             name="additionalImages"
@@ -150,11 +155,12 @@ export function ProductRegister(){
               />
             )}
           />
-        </div>
+        </div> */}
         <div
           className="flex flex-col w-full min-[521px]:pl-5"
         >
-          <Input
+          <div>
+            <Input
             label="Name"
             type="text"
             {...register("name", {required: true, minLength: 7})}
@@ -172,7 +178,7 @@ export function ProductRegister(){
             <option value="headphone">Headphone</option>
           </SelectOptions>
           
-          <div
+          {/* <div
             className="w-full flex flex-row gap-x-3"
           >
             <Input
@@ -192,13 +198,51 @@ export function ProductRegister(){
               placeholder="0"
               {...register("stock")}
             />
-          </div>
+          </div> */}
           <TextArea
             label="Descrição do produto"
             placeholder="Digite os detalhes..."
             rows={2}
             {...register("description")}
           />
+          <Controller
+            control={control}
+            name="variations.0.images"
+            render={({ field }) => (
+              <ImagesSelector
+                value={field.value || []}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <Input
+                          type="text"
+                          label="Name"
+                          placeholder="ex: Black Edition"
+                          {...register(`variations.0.name`, {required:true})}
+                        />
+
+                        <div className="w-full flex flex-row gap-x-3">
+                          <Input
+                            label="Price"
+                            placeholder="R$ 0,00"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            inputMode="decimal"
+                            {...register(`variations.0.price`)}
+                          />
+
+                          <Input
+                            label="Estoque"
+                            type="number"
+                            min="0"
+                            step="1"
+                            {...register(`variations.0.stock`)}
+                          />
+                        </div>
+        </div>
+          
 
           <div
             className="w-full flex flex-col  border-b-input-background rounded-xl"
@@ -208,6 +252,7 @@ export function ProductRegister(){
             >
               <p
                 onClick={() => append({
+                  main: false,
                   name: "",
                   stock: "0",
                   price: "0",
@@ -223,61 +268,64 @@ export function ProductRegister(){
                 />
                 Adicionar Variação
               </p>
-              {variationFields.length > 0 && (
+              {variationFields.length > 1 && (
                 <div
                 className="w-full flex flex-col border border-[#DDDDDD] rounded-xl  mt-2 pb-7 px-3 min-[521px]:max-h-[196px] min-[521px]:overflow-auto"
                 >
-                  {variationFields.map((variation, index) => (
-                    <div key={variation.id} className="relative w-full flex flex-col mt-3 mb-8 py-7 border-b border-[#DDDDDD]">
-                      <span
-                        className="absolute top-2 right-0 p-1"
-                        onClick={() => remove(index)}
-                      >
-                        <Image
-                          src="/icons/dark-close-icon.svg"
-                          width={13}
-                          height={13}
-                          alt="close icon"
-                        />
-                      </span>
-                      <Input
-                        type="text"
-                        label="Name"
-                        {...register(`variations.${index}.name`, {required:true})}
-                      />
-
-                      <div className="w-full flex flex-row gap-x-3">
+                  {variationFields.map((variation, index) => 
+                    <div key={variation.id}>{index !== 0 && (
+                      <div 
+                        className="relative w-full flex flex-col mt-3 mb-8 py-7 border-b border-[#DDDDDD]">
+                        <span
+                          className="absolute top-2 right-0 p-1"
+                          onClick={() => remove(index)}
+                        >
+                          <Image
+                            src="/icons/dark-close-icon.svg"
+                            width={13}
+                            height={13}
+                            alt="close icon"
+                          />
+                        </span>
                         <Input
-                          label="Price"
-                          placeholder="R$ 0,00"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          inputMode="decimal"
-                          {...register(`variations.${index}.price`)}
+                          type="text"
+                          label="Name"
+                          placeholder="ex: Black Edition"
+                          {...register(`variations.${index}.name`, {required:true})}
                         />
 
-                        <Input
-                          label="Estoque"
-                          type="number"
-                          min="0"
-                          step="1"
-                          {...register(`variations.${index}.stock`)}
+                        <div className="w-full flex flex-row gap-x-3">
+                          <Input
+                            label="Price"
+                            placeholder="R$ 0,00"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            inputMode="decimal"
+                            {...register(`variations.${index}.price`)}
+                          />
+
+                          <Input
+                            label="Estoque"
+                            type="number"
+                            min="0"
+                            step="1"
+                            {...register(`variations.${index}.stock`)}
+                          />
+                        </div>
+                        <Controller
+                          control={control}
+                          name={`variations.${index}.images`}
+                          render={({ field }) => (
+                            <ImagesSelector
+                              value={field.value || []}
+                              onChange={field.onChange}
+                            />
+                          )}
                         />
                       </div>
-
-                      <Controller
-                      control={control}
-                      name={`variations.${index}.images`}
-                      render={({ field }) => (
-                        <ImagesSelector
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    </div>
-                  ))}
+                    )}</div>
+                  )}
                 </div>
               )}
             </div>

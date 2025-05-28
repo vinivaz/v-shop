@@ -90,9 +90,9 @@ export function ImagesSelector({ value = [], onChange }: ImagesSelectorProps) {
           ))
         ) : (
           <div
-            className=" flex justify-center items-center w-full m-2 text-fading-text font-medium"
+            className="flex justify-center items-center w-full h-[50px] m-2 text-fading-text font-medium"
           >
-            <p className="text-sm">Arraste imagens aqui</p>
+            <span className="text-sm">Arraste imagens aqui</span>
           </div>
         )}
       </div>

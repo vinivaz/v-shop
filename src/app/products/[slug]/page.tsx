@@ -8,13 +8,16 @@
   import { Container } from "@/app/Components/ui/Container";
   import Image from "next/image";
   import { getProductBySlug } from "@/lib/api/products";
+import { validators } from "tailwind-merge";
 
   type Variations = {
+    id: string;
+    main: boolean;
     name: string,
     stock: number
     price: number;
     images: string[]
-  }[]
+  }
 
 
 
@@ -23,11 +26,12 @@
     name: string,
     slug: string,
     category: string,
-    price: number,
-    stock: number,
+    // price: number,
+    // stock: number,
     description: string,
     mainImage?: string,
-    additionalImages: string[],
+    // additionalImages: string[],
+    variations: Variations[]
   }
 
   export default async function Product({
@@ -38,9 +42,14 @@
 
     const { slug } = await params;
 
-    const product: Product = await getProductBySlug(slug)
-    console.log(product)
-    
+
+
+    const product: Product = await getProductBySlug(slug);
+
+    const mainVariation = product.variations.filter(variation => variation.main)[0]
+
+    console.log(mainVariation)
+
 
     return (
       <Container>
@@ -54,19 +63,19 @@
               className="bg-white flex items-center justify-center w-full h-[320px] max-h-[320px] rounded-3xl"
             >
               <Image
-              className="object-cover max-w-[100px] w-full"
-              src={product.mainImage||""}
-              width={75}
-              height={75}
-              alt={product.name}
-              quality={100}
-            />
+                className="object-cover max-w-[100px] w-full"
+                src={product.mainImage||""}
+                width={75}
+                height={75}
+                alt={product.name}
+                quality={100}
+              />
 
             </div>
             <div
               className="flex flex-row w-full gap-1 my-4"
             >
-              {product.additionalImages.map((image, index) => (
+              {mainVariation.images.map((image, index) => (
                 <div
                   key={index}
                   className="w-full max-w-[70px] flex justify-center overflow-hidden h-[70px] bg-white rounded-xl"
@@ -110,31 +119,31 @@
               <div
                 className="flex flex-row w-full gap-1" 
               >
-                <div
-                  className="flex flex-col max-w-[80px]"
-                >
-                  <span>Black</span>
+                {product.variations.map((variation) => (
                   <div
-                    className="flex w-[53px] h-[53px] rounded-xl border"
+                    className="flex flex-col max-w-[80px]"
                   >
-
+                    <span>{variation.name}</span>
+                    <div
+                      className="flex w-[53px] h-[53px] rounded-xl border"
+                    >
+                      <Image
+                        className="object-contain w-full max-w-[70px]"
+                        src={variation.images[0]||""}
+                        width={53}
+                        height={53}
+                        alt={product.name}
+                        quality={50}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div
-                  className="flex flex-col max-w-[80px]"
-                >
-                  <span>Black</span>
-                  <div
-                    className="flex w-[53px] h-[53px] rounded-xl border"
-                  >
+                ))}
 
-                  </div>
-                </div>
               </div>
               <span
                 className="text-dark-text font-bold text-lg my-5"
               >
-                R$ {product.price}
+                R$ {mainVariation.price}
               </span>
 
               <div

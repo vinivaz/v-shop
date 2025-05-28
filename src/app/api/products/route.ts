@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { generateUniqueSlug } from '@/utils/generateUniqueSlug';
 
 type UnparsedVariation = {
+  main: boolean;
   name: string;
   stock: string;
   price: string;
@@ -11,6 +12,7 @@ type UnparsedVariation = {
 };
 
 type Variation = {
+  main: boolean;
   name: string;
   stock: number;
   price: number;
@@ -44,10 +46,10 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try{
 
-    const { price, stock, variations, ...body } = await request.json()
+    const {variations, ...body } = await request.json()
 
-    const parsedPrice = parseFloat(price);
-    const parsedStock = parseInt(stock);
+    // const parsedPrice = parseFloat(price);
+    // const parsedStock = parseInt(stock);
 
     const parsedVariations = variations?.map((variation: UnparsedVariation) => ({
       name: variation.name,
@@ -64,12 +66,10 @@ export async function POST(request: Request) {
         slug,
         description: body.description,
         category: body.category,
-        price: parsedPrice,
-        stock: parsedStock,
-        mainImage: body.mainImage || "",
-        additionalImages: body.additionalImages?.map((img:string) => img) || [],
+        mainImage: parsedVariations[0].images[0] || "",
         variations: {
           create: parsedVariations?.map((variation:Variation) => ({
+            main: variation.main,
             name: variation.name,
             stock: variation.stock,
             price: variation.price,
@@ -91,10 +91,8 @@ export async function POST(request: Request) {
 
 // export async function GET(request: Request) {
 //   try{
-//     const products = await prisma.product.findMany({
-//       where: { slug: { equals: undefined } },
-//     });
 
+    
 //     for (const product of products) {
 
 //       const slug = await generateUniqueSlug(product.name);
