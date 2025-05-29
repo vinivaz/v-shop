@@ -9,6 +9,8 @@
   import Image from "next/image";
   import { getProductBySlug } from "@/lib/api/products";
 import { validators } from "tailwind-merge";
+import { ProductPictures } from "@/app/Components/ProductPictures/ProductPictures";
+import { VariationSelector } from "@/app/Components/VariationSelector.tsx/VariationSelector";
 
   type Variations = {
     id: string;
@@ -33,23 +35,33 @@ import { validators } from "tailwind-merge";
     // additionalImages: string[],
     variations: Variations[]
   }
+  
+  
 
   export default async function Product({
     params,
+    searchParams
   }: {
-    params: Promise<{ slug: string }>
+    params: Promise<{ slug: string, variation: string }>,
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
   }){
 
     const { slug } = await params;
+    const { vId } = await searchParams;
 
-
-
+    
     const product: Product = await getProductBySlug(slug);
 
-    const mainVariation = product.variations.filter(variation => variation.main)[0]
 
-    console.log(mainVariation)
+    const variationFromParams = product.variations.find((v) => v.id === vId);
+    const selectedVariation =
+      variationFromParams ||
+      product.variations.find((v) => v.main) ||
+      product.variations[0];
 
+    if (!selectedVariation) {
+      return <div>Produto sem variações disponíveis no momento.</div>;
+    }
 
     return (
       <Container>
@@ -64,7 +76,7 @@ import { validators } from "tailwind-merge";
             >
               <Image
                 className="object-cover max-w-[100px] w-full"
-                src={product.mainImage||""}
+                src={selectedVariation.images[0]||""}
                 width={75}
                 height={75}
                 alt={product.name}
@@ -72,25 +84,19 @@ import { validators } from "tailwind-merge";
               />
 
             </div>
-            <div
-              className="flex flex-row w-full gap-1 my-4"
-            >
-              {mainVariation.images.map((image, index) => (
-                <div
-                  key={index}
-                  className="w-full max-w-[70px] flex justify-center overflow-hidden h-[70px] bg-white rounded-xl"
-                >
-                  <Image
-                    className="object-contain w-full max-w-[70px]"
-                    src={image||""}
-                    width={70}
-                    height={70}
-                    alt={product.name}
-                    quality={50}
-                  />
-                </div>
-              ))}
-            </div>
+            {product.variations.map((variation) => (
+              <div
+                key={variation.id}
+                data-variation={variation.id}
+                className={`flex flex-row w-full gap-1 my-4 ${
+                  variation.id !== selectedVariation?.id ? "hidden" : ""
+                }`}
+              >
+                <ProductPictures variation={variation} selectedVariation={selectedVariation}/>
+              </div>
+              
+            ))}
+
 
           </div>
           <div
@@ -119,31 +125,19 @@ import { validators } from "tailwind-merge";
               <div
                 className="flex flex-row w-full gap-1" 
               >
-                {product.variations.map((variation) => (
-                  <div
-                    className="flex flex-col max-w-[80px]"
-                  >
-                    <span>{variation.name}</span>
-                    <div
-                      className="flex w-[53px] h-[53px] rounded-xl border"
-                    >
-                      <Image
-                        className="object-contain w-full max-w-[70px]"
-                        src={variation.images[0]||""}
-                        width={53}
-                        height={53}
-                        alt={product.name}
-                        quality={50}
-                      />
-                    </div>
-                  </div>
+                {product.variations.map((variation, index) => (
+                  <VariationSelector
+                    key={index}
+                    variation={variation}
+                    selectedVariation={selectedVariation}
+                  />
                 ))}
 
               </div>
               <span
                 className="text-dark-text font-bold text-lg my-5"
               >
-                R$ {mainVariation.price}
+                R$ {selectedVariation.price}
               </span>
 
               <div
