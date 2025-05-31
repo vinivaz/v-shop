@@ -86,7 +86,7 @@ export function ProductDetails({
 
 
   return (
-    <div className="flex flex-row gap-3 items-start justify-center w-full max-w-[640px] my-5">
+    <div className="flex flex-row gap-3 items-start justify-center w-full max-w-[640px] my-5 max-[556px]:flex-col">
       <div className="flex flex-col w-full">
         <div className="bg-white flex items-center justify-center w-full h-[320px] max-h-[320px] rounded-3xl">
           {product.variations[variationIndex].images[imageIndex] && (
@@ -103,7 +103,7 @@ export function ProductDetails({
 
         </div>
 
-        <div className="flex flex-row w-full gap-1 my-4">
+        <div className="inline-flex flex-row flex-wrap w-full max-w-[290px]  gap-1 my-4">
         {product.variations[variationIndex].images.map((image, index) => {
           const isActive = index === imageIndex;
           const imageSearchParams = new URLSearchParams(searchParams.toString());
@@ -115,10 +115,10 @@ export function ProductDetails({
               aria-label="select image"
               href={createUrl(pathname, imageSearchParams)}
               scroll={false}
-              className={`w-full max-w-[70px] flex justify-center overflow-hidden h-[70px] bg-white rounded-xl ${isActive && "border-2 border-darker"}`}
+              className={`w-full max-w-[66px] flex justify-center overflow-hidden h-[66px] bg-white rounded-xl ${isActive && "border-2 border-darker"}`}
             >
               <Image
-                className=" object-contain w-full max-w-[70px] pointer-none:*"
+                className=" object-contain w-full max-w-[66px] pointer-none:*"
                 src={image||""}
                 width={70}
                 height={70}
@@ -127,6 +127,8 @@ export function ProductDetails({
                 // objectFit="contain"
               />
             </Link>
+                  
+
           )
         })}
           
@@ -145,7 +147,7 @@ export function ProductDetails({
           <span className="font-medium">Variações</span>
 
           <div
-            className="flex flex-row w-full gap-1" 
+            className="inline-flex flex-row flex-wrap w-full max-w-[290px] max gap-1 items-end py-2" 
           >
             {product.variations.map((variation, index) => {
               const isActive = index === variationIndex;
@@ -159,12 +161,16 @@ export function ProductDetails({
                   aria-label="select variation"
                   href={createUrl(pathname, variationSearchParams)}
                   scroll={false}
-                  className="flex flex-col max-w-[80px]"
+                  className="flex flex-col max-w-[80px] items-center"
                 >
-                  <span>{variation.name}</span>
+                  <span
+                    className='line-clamp-2 leading-4 text-center'
+                  >
+                    {variation.name}
+                  </span>
                   <div
-                    className={`flex w-[53px] h-[53px] rounded-xl overflow-hidden ${
-                      isActive ? "border-2" : ""
+                    className={`flex w-[53px] h-[53px] rounded-xl overflow-hidden border ${
+                      isActive ? "border-darker" : "border-[#DDDDDD]"
                     }`}
                   >
                     <Image
@@ -184,7 +190,7 @@ export function ProductDetails({
           </div>
 
           <div className="text-dark-text font-bold text-lg my-5">
-            R$ {selectedVariationFromServer.price}
+            R$ {product.variations[variationIndex].price}
           </div>
 
           <div className="w-full max-w-[265px] flex gap-1">
