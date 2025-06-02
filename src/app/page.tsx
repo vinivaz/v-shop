@@ -20,7 +20,7 @@ type Variations = {
 
 
 type Product = {
-  _id: string,
+  id: string,
   name: string,
   slug: string,
   category: string,
@@ -40,7 +40,7 @@ type FirstPageProps = {
 
 export default async function Home() {
   const products : FirstPageProps  = await getProducts()
-
+  console.log(products)
   return (
   <Container>
     <Hero/>

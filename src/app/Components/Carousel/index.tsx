@@ -11,7 +11,7 @@ import Image from 'next/image';
 import "./Carousel.css"
 
 type ProductType = {
-  _id: string,
+  id: string,
   name: string,
   slug: string,
   category: string,

@@ -7,7 +7,7 @@ import { RatingStars } from "../RatingStars";
 
 
 type ProductType = {
-  _id: string,
+  id: string,
   name: string,
   slug: string,
   category: string,

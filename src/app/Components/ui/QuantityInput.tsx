@@ -6,17 +6,16 @@ import clsx from "clsx";
 
 type InputProps = {
   stock: number;
+  value?: number;
   inputClass?: string;
   containerClass?: string;
+  onValueChange: (value: number) => void;
 } & InputHTMLAttributes<HTMLInputElement>
 
 export function QuantityInput(props:InputProps){
-  const { stock, containerClass = "", inputClass = "", ...rest } = props;
+  const { stock, value = 1, onValueChange, containerClass = "", inputClass = "", ...rest } = props;
 
-  const [quantity, setQuantity] = useState<number>(1)
-
-  // const containerClassName = twMerge("w-full ", containerClass)
-  
+  const [quantity, setQuantity] = useState<number>(value)
 
   return(
     <div
@@ -25,9 +24,11 @@ export function QuantityInput(props:InputProps){
         className="flex">
         <button
           className="w-[24px] h-[24px] bg-darker rounded-s-lg text-white"
-          onClick={() => setQuantity((quantity) => {
-            return (quantity - 1) < 1 ? 1 : quantity - 1
-          })}
+          onClick={() => {
+            if((quantity - 1) < 1)return;
+            setQuantity(quantity - 1)
+            onValueChange((quantity - 1))
+          }}
         >
           -
         </button>
@@ -38,9 +39,11 @@ export function QuantityInput(props:InputProps){
         </div>
         <button
           className="w-[24px] h-[24px] bg-darker rounded-e-lg text-white"
-          onClick={() => setQuantity((quantity) => {
-            return quantity + 1 > stock ? stock : quantity + 1
-          })}
+          onClick={() => {
+            if((quantity + 1) > stock)return;
+            setQuantity(quantity + 1)
+            onValueChange((quantity + 1))
+          }}
         >
           +
         </button>

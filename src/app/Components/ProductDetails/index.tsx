@@ -10,7 +10,7 @@ import { faHeart as fullHeart } from '@fortawesome/free-solid-svg-icons';
 import { RatingStars } from '@/app/Components/RatingStars';
 import { Button } from '@/app/Components/ui/Button';
 
-
+import { useCartStore } from '../../../../store/cartStore';
 
 import Link from 'next/link';
 
@@ -25,7 +25,7 @@ type Variations = {
 };
 
 type Product = {
-  _id: string;
+  id: string;
   name: string;
   slug: string;
   category: string;
@@ -48,35 +48,42 @@ export function ProductDetails({
   product: Product;
   selectedVariationFromServer: Variations;
 }) {
-  // const [selectedVariation, setSelectedVariation] = useState<Variations>(selectedVariationFromServer);
-  // const [selectedImage, setSelectedImage] = useState<string>(selectedVariationFromServer.images[0]);
 
-
-  // const router = useRouter();
-  // const searchParams = useSearchParams();
-
-  // const handleVariationClick = (variation: Variations) => {
-
-  //   setSelectedVariation(variation)
-  //   const params = new URLSearchParams(searchParams.toString());
-  //   params.set('vId', variation.id); // define ou substitui o parâmetro
-
-  //   router.push(`?${params.toString()}`, { scroll: false });
-  // };
-
-  // useEffect(() => {
-  //   setSelectedImage(selectedVariation.images[0]);
-  // }, [selectedVariation]);
-
+  const { addProduct } = useCartStore()
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const variationSearchParam = searchParams.get('variation');
-  const variationIndex = variationSearchParam ? parseInt(variationSearchParam) : 0;
+  function getValidVariationIndex(
+    value: string | null,
+    variations: Variations[]
+  ): number {
+    if (!value) return 0;
 
+    const asIndex = parseInt(value);
+    if (!isNaN(asIndex) && variations[asIndex]) return asIndex;
+
+    const variationIndexById = variations.findIndex(v => v.id === value);
+    if (variationIndexById !== -1) return variationIndexById;
+
+    return 0;
+  }
+
+  function getValidImageIndex(
+    value: string | null,
+    images: string[]
+  ): number {
+    const asIndex = parseInt(value || '');
+    if (!isNaN(asIndex) && images[asIndex]) return asIndex;
+
+    return 0;
+  }
+
+  const variationSearchParam = searchParams.get('variation');
+  const variationIndex = getValidVariationIndex(variationSearchParam, product.variations);
+ 
   const imageSearchParam = searchParams.get('image');
-  const imageIndex = imageSearchParam ? parseInt(imageSearchParam) : 0;
+  const imageIndex = getValidImageIndex(imageSearchParam, product.variations[variationIndex].images);
 
 
   // const nextSearchParams = new URLSearchParams(searchParams.toString());
@@ -195,7 +202,22 @@ export function ProductDetails({
 
           <div className="w-full max-w-[265px] flex gap-1">
             <Button>Comprar</Button>
-            <Button variant="secondary" customStyle="max-w-[40px] p-1">
+            <Button
+              variant="secondary"
+              customStyle="max-w-[40px] p-1"
+              onClick={() => {
+                console.log({
+                ...product,
+                variation: product.variations[variationIndex],
+                quantity: 1
+              })
+                addProduct({
+                ...product,
+                variation: product.variations[variationIndex],
+                quantity: 1
+              })}
+            }
+            >
               <Image src="/icons/add-to-cart-icon.svg" width={25} height={25} alt="add to cart icon" />
             </Button>
             <Button variant="transparent" customStyle="max-w-[40px] text-2xl text-darker">
