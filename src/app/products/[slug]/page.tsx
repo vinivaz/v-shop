@@ -10,6 +10,7 @@ import { Button } from "@/app/Components/ui/Button";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as emptyHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as fullHeart } from '@fortawesome/free-solid-svg-icons';
+import { ProductButtons } from "@/app/Components/ProductButtons";
 
   type Variations = {
     id: string;
@@ -128,7 +129,7 @@ import { faHeart as fullHeart } from '@fortawesome/free-solid-svg-icons';
             <div className="bg-white flex items-center justify-center w-full h-[320px] max-h-[320px] rounded-3xl">
               {product.variations[variationIndex].images[imageIndex] && (
                 <Image
-                  className="object-cover max-w-[100px] w-full"
+                  className="object-contain max-w-[100px] w-full max-h-[95%]"
                   src={product.variations[variationIndex].images[imageIndex] as string}
                   width={75}
                   height={75}
@@ -224,19 +225,7 @@ import { faHeart as fullHeart } from '@fortawesome/free-solid-svg-icons';
                 R$ {product.variations[variationIndex].price}
               </div>
 
-              <div className="w-full max-w-[265px] flex gap-1">
-                <Button>Comprar</Button>
-                <Button
-                  variant="secondary"
-                  customStyle="max-w-[40px] p-1"
-
-                >
-                  <Image src="/icons/add-to-cart-icon.svg" width={25} height={25} alt="add to cart icon" />
-                </Button>
-                <Button variant="transparent" customStyle="max-w-[40px] text-2xl text-darker">
-                  <FontAwesomeIcon icon={emptyHeart} />
-                </Button>
-              </div>
+              <ProductButtons product={product} variationIndex={variationIndex}/>
             </div>
 
             <div className="w-full border-t-2 border-t-secondary-border pt-4">

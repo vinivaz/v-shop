@@ -19,7 +19,7 @@ export function Button(props: ButtonProps) {
 
   const finalClassName = twMerge(
     clsx(
-      "w-full flex items-center justify-center rounded-xl p-2 mt-4",
+      "w-full flex items-center justify-center rounded-xl px-2 py-2 mt-4",
       variantStyles[variant],
     ),
     customStyle

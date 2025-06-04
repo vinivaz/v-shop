@@ -42,88 +42,88 @@ export default async function Home() {
   const products : FirstPageProps  = await getProducts()
   console.log(products)
   return (
-  <Container>
-    <Hero/>
-    <div
-      className="w-full flex flex-row justify-between my-5"
-    >
+    <>
+      <Hero/>
       <div
-        className=""
+        className="w-full flex flex-row justify-between my-5"
       >
-        <Image
-          className="object-contain w-full max-w-52 rounded-3xl"
-          src="/ad/videogames-mini-ad-background.png"
-          width={259.82}
-          height={222.41}
-          quality={100}
-          alt="mini ad background image"
-        />
-      </div>
+        <div
+          className=""
+        >
+          <Image
+            className="object-contain w-full max-w-52 rounded-3xl"
+            src="/ad/videogames-mini-ad-background.png"
+            width={259.82}
+            height={222.41}
+            quality={100}
+            alt="mini ad background image"
+          />
+        </div>
 
-      <div>
-        <Image
-          className="object-contain w-full max-w-52 rounded-3xl"
-          src="/ad/smartphones-mini-ad-background.png"
-          width={259.82}
-          height={222.41}
-          quality={100}
-          alt="mini ad background image"
-        />
-      </div>
-      <div>
-        <Image
-          className="object-contain w-full max-w-52 rounded-3xl"
-          src="/ad/watches-mini-ad-background.png"
-          width={259.82}
-          height={222.41}
-          quality={100}
-          alt="mini ad background image"
-        />
-      </div>
-      <div>
-        <Image
-          className="object-contain w-full max-w-52 rounded-3xl"
-          src="/ad/headphones-mini-ad-background.png"
-          width={259.82}
-          height={222.41}
-          quality={100}
-          alt="mini ad background image"
-        />
-      </div>
-    </div>
-
-    <div
-      className="w-full my-8 "
-    >
-      <div
-        className="w-full h-full flex flex-col "
-      >
-        <h3 className="font-medium text-lg py-5">Smartphones</h3>
-        <Carousel products={products.smartphones}/>
+        <div>
+          <Image
+            className="object-contain w-full max-w-52 rounded-3xl"
+            src="/ad/smartphones-mini-ad-background.png"
+            width={259.82}
+            height={222.41}
+            quality={100}
+            alt="mini ad background image"
+          />
+        </div>
+        <div>
+          <Image
+            className="object-contain w-full max-w-52 rounded-3xl"
+            src="/ad/watches-mini-ad-background.png"
+            width={259.82}
+            height={222.41}
+            quality={100}
+            alt="mini ad background image"
+          />
+        </div>
+        <div>
+          <Image
+            className="object-contain w-full max-w-52 rounded-3xl"
+            src="/ad/headphones-mini-ad-background.png"
+            width={259.82}
+            height={222.41}
+            quality={100}
+            alt="mini ad background image"
+          />
+        </div>
       </div>
 
       <div
-        className="w-full h-full flex flex-col "
+        className="w-full my-8 "
       >
-        <h3 className="font-medium text-lg py-5">Videogames</h3>
-        <Carousel products={products.consoles}/>
-      </div>
-      <div
-        className="w-full h-full flex flex-col "
-      >
-        <h3 className="font-medium text-lg py-5">Smartwatches</h3>
-        <Carousel products={products.smartwatches}/>
-      </div>
+        <div
+          className="w-full h-full flex flex-col "
+        >
+          <h3 className="font-medium text-lg py-5">Smartphones</h3>
+          <Carousel products={products.smartphones}/>
+        </div>
 
-      <div
-        className="w-full h-full flex flex-col "
-      >
-        <h3 className="font-medium text-lg py-5">Headphones</h3>
-        <Carousel products={products.headphones}/>
+        <div
+          className="w-full h-full flex flex-col "
+        >
+          <h3 className="font-medium text-lg py-5">Videogames</h3>
+          <Carousel products={products.consoles}/>
+        </div>
+        <div
+          className="w-full h-full flex flex-col "
+        >
+          <h3 className="font-medium text-lg py-5">Smartwatches</h3>
+          <Carousel products={products.smartwatches}/>
+        </div>
+
+        <div
+          className="w-full h-full flex flex-col "
+        >
+          <h3 className="font-medium text-lg py-5">Headphones</h3>
+          <Carousel products={products.headphones}/>
+        </div>
       </div>
-    </div>
-  </Container>
-    
+    </>
+
   );
 }
 

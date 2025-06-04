@@ -8,7 +8,7 @@ config.autoAddCss = false
 
 import { Header } from "./Components/Header";
 import { Footer } from "./Components/Footer";
-
+import { Container } from "./Components/ui/Container";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -33,7 +33,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-void flex items-center flex-col h-full justify-between pt-[45px]">
         <Header/>
-        {children}
+        <Container>
+          {children}          
+        </Container>
+
         <Footer/>
       </body>
     </html>

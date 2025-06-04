@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function Header() {
   return(
-    <nav className="w-full h-[45px] fixed top-0 z-2  flex shrink-0 justify-center items-center bg-white">
+    <nav className=" z-9 w-full h-[45px] fixed top-0  flex shrink-0 justify-center items-center bg-white">
       <div className="max-w-[1120px] w-full flex justify-between">
         <Link 
           href='/'

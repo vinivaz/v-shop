@@ -21,9 +21,9 @@ export function QuantityInput(props:InputProps){
     <div
       className="flex flex-col justify-between items-center">
       <div
-        className="flex">
+        className="flex h-[24px] max-sm:h-[20px]">
         <button
-          className="w-[24px] h-[24px] bg-darker rounded-s-lg text-white"
+          className="w-[24px] h-full flex justify-center items-center bg-darker rounded-s-lg text-white max-sm:w-[20px]"
           onClick={() => {
             if((quantity - 1) < 1)return;
             setQuantity(quantity - 1)
@@ -33,12 +33,12 @@ export function QuantityInput(props:InputProps){
           -
         </button>
         <div
-          className=" flex items-center justify-center max-w-[60px] min-w-[30px]"
+          className="flex items-center justify-center max-w-[60px] min-w-[30px] h-full"
         >
           {quantity}
         </div>
         <button
-          className="w-[24px] h-[24px] bg-darker rounded-e-lg text-white"
+          className="w-[24px] h-full flex justify-center items-center bg-darker rounded-e-lg text-white max-sm:w-[20px]"
           onClick={() => {
             if((quantity + 1) > stock)return;
             setQuantity(quantity + 1)
