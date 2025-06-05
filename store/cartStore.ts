@@ -2,12 +2,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type Variation = {
+  productId: string;
   id: string;
   main: boolean;
   name: string;
   stock: number;
   price: number;
   images: string[];
+  quantity: number;
 }
 
 type Product = {
@@ -16,15 +18,22 @@ type Product = {
   slug: string;
   category: string;
   description: string;
-  variation: Variation;
-  quantity: number;
+  selectedVariation: Variation;
+  variations: Variation[]
+}
+
+type changingProductVariationProp = {
+  prevProductId: string;
+  prevVariationId: string;
+  product: Product;
 }
 
 export type CartStore = {
   products: Product[];
   addProduct: (product: Product) => void;
   updateProduct: (product: Product) => void;
-  removeProduct: (productId: string) => void;
+  removeProduct: (productId: string, variationId: string) => void;
+  changeProductVariation: (data: changingProductVariationProp) => void;
   clearCart: () => void;
 }
 
@@ -34,7 +43,7 @@ export const useCartStore = create<CartStore>()(
       products: [],
       addProduct: (product) => 
         set((state) => {
-          const existing = state.products.find((productItem) => productItem.id === product.id  && productItem.variation.id === product.variation.id );
+          const existing = state.products.find((productItem) => productItem.id === product.id  && productItem.selectedVariation.id === product.selectedVariation.id );
 
           if(existing) {
             return {
@@ -42,10 +51,14 @@ export const useCartStore = create<CartStore>()(
                 productItem.id === product.id?
                   {
                     ...productItem,
-                    quantity: productItem.quantity + 1 > product.variation.stock ?
-                      product.variation.stock
-                    :
-                      productItem.quantity + 1
+                    selectedVariation: {
+                      ...productItem.selectedVariation,
+                      quantity: productItem.selectedVariation.quantity + 1 > product.selectedVariation.stock ?
+                        product.selectedVariation.stock
+                      :
+                        productItem.selectedVariation.quantity + 1
+                    } 
+                      
                   }
                 :
                   productItem
@@ -55,21 +68,73 @@ export const useCartStore = create<CartStore>()(
 
           return { products: [...state.products, product]}
         }),
-        updateProduct: (product) =>
+          changeProductVariation: (data) =>
           set((state) => {
+            const { product, prevProductId, prevVariationId } = data;
+
+            const existing = state.products.find((productItem) => 
+              productItem.id === product.id
+            && 
+              productItem.selectedVariation.id === product.selectedVariation.id
+            );
+
+            if(existing) {
+              
+
+              return {
+                products: [
+                  ...state.products.filter((singleProduct) => (singleProduct.id !== existing.id || singleProduct.selectedVariation.id !== existing.selectedVariation.id) && (singleProduct.id !== prevProductId || singleProduct.selectedVariation.id !== prevVariationId)),
+                  product
+                ]
+              };
+            }
             return {
               products: state.products.map((productItem) => 
-                productItem.id === product.id  &&
-                productItem.variation.id === product.variation.id
+                productItem.id === product.id
                 ? product
                 : productItem
               )
             }
           }),
-        removeProduct: (productId) =>
+          // updateProductQuantity: (product:Product) =>
+          // set((state) => {
+          //   const existing = state.products.find((productItem) => 
+          //     productItem.id === product.id
+          //   && 
+          //     productItem.selectedVariation.id === product.selectedVariation.id
+          //   );
+
+          //   return {
+          //     products: state.products.map((productItem) => 
+          //       productItem.id === product.id  &&
+          //       productItem.selectedVariation.id === product.selectedVariation.id
+          //       ? {
+          //           ...product,
+          //           selectedVariation:{
+          //             ...product.selectedVariation,
+          //             quantity: product.selectedVariation.quantity
+          //           }
+
+          //         }
+          //       : productItem
+          //     )
+          //   }
+          // }),
+        updateProduct: (product) =>
+          set((state) => {
+            return {
+              products: state.products.map((productItem) => 
+                productItem.id === product.id  &&
+                productItem.selectedVariation.id === product.selectedVariation.id
+                ? product
+                : productItem
+              )
+            }
+          }),
+        removeProduct: (productId, variationId) =>
           set((state) =>{
             return {
-              products: state.products.filter((productItem) => productItem.id !== productId)
+              products: state.products.filter((productItem) => productItem.id !== productId || productItem.selectedVariation.id !== variationId)
             }
           }),
         clearCart: () => 

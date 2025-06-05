@@ -20,6 +20,16 @@ type ProductType = {
   description: string,
   mainImage?: string,
   additionalImages: string[],
+  variations: {
+    main: boolean;
+    name: string;
+    images: string[];
+    stock: number;
+    price: number;
+    id: string;
+    productId: string;
+    quantity: number;
+  }[]
 };
 
 type CarouselProps = {

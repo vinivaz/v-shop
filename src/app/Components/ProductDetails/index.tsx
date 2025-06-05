@@ -213,7 +213,7 @@ export function ProductDetails({
               })
                 addProduct({
                 ...product,
-                variation: product.variations[variationIndex],
+                selectedVariation: product.variations[variationIndex],
                 quantity: 1
               })}
             }

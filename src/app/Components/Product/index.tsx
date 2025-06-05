@@ -1,10 +1,12 @@
+"use client"
+
 // Components
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as fullHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as emptyHeart } from "@fortawesome/free-solid-svg-icons";
 import { RatingStars } from "../RatingStars";
-
+import { useCartStore } from "../../../../store/cartStore";
 
 type ProductType = {
   id: string,
@@ -16,6 +18,16 @@ type ProductType = {
   description: string,
   mainImage?: string,
   additionalImages: string[],
+  variations: {
+    main: boolean;
+    name: string;
+    images: string[];
+    stock: number;
+    price: number;
+    id: string;
+    productId: string;
+    quantity: number;
+  }[]
 };
 
 type ProductProps = {
@@ -25,6 +37,8 @@ type ProductProps = {
 
 
 export function Product({rating, data}:ProductProps){
+  const { addProduct } = useCartStore()
+
   return(
     <div
       className=" max-w-[208px] w-full h-[364px]"
@@ -72,6 +86,13 @@ export function Product({rating, data}:ProductProps){
           </button>
           <button
             className="bg-transparent flex items-center justify-center w-[32px] h-[32px] border rounded-xl border-gray-300"
+            onClick={() => addProduct({
+              ...data,
+              selectedVariation: {
+                ...data.variations[0],
+                quantity: 1
+              }
+            })}
           >
             <Image
               src="/icons/add-to-cart-icon.svg"

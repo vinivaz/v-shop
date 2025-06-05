@@ -141,7 +141,7 @@ import { ProductButtons } from "@/app/Components/ProductButtons";
 
             </div>
 
-            <div className="inline-flex flex-row flex-wrap w-full max-w-[290px]  gap-1 my-4">
+            <div className="inline-flex flex-row flex-wrap w-full max-w-[290px] gap-1 my-4">
             {product.variations[variationIndex].images.map((image, index) => {
               const isActive = index === imageIndex;
               return(

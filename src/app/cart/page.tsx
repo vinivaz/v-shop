@@ -10,13 +10,48 @@ import Link from "next/link";
 
 // Hooks
 import { useCartStore } from "../../../store/cartStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Modal from "../Components/Modal";
+import { Product, Variation } from "@prisma/client";
 
 // import { getProducts } from "@/lib/api/products";
 
+type CartVariation = {
+  id: string;
+  main: boolean;
+  name: string;
+  stock: number;
+  price: number;
+  images: string[];
+  productId: string;
+  quantity: number;
+};
+
+type CartProduct = {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  description: string;
+  selectedVariation: CartVariation;
+  variations: CartVariation[];
+}
+
+type changingProductVariationProp = {
+  prevProductId: string;
+  prevVariationId: string;
+  product: CartProduct;
+}
+
 export default function Cart(){
-  const { products, updateProduct, removeProduct } = useCartStore();
-  const [ isActive, setIsActive ] = useState<boolean>(false)
+  const { products, changeProductVariation, updateProduct, removeProduct, clearCart } = useCartStore();
+  const [ isActive, setIsActive ] = useState<boolean>(false);
+  const [ showing, setShowing ] = useState(false);
+  const [ selectingProductVariation, setSelectingProductVariation ] = useState<changingProductVariationProp|null>(null)
+
+  const getVariations = (productId: string) => {
+
+  }
 
   return(
     <div
@@ -54,12 +89,12 @@ export default function Cart(){
                 >
                   <Input type="checkbox" containerClass="w-auto" />
                   <Link
-                    href={`products/${product.slug}?variation=${product.variation.id}`}
+                    href={`products/${product.slug}?variation=${product.selectedVariation.id}`}
                     className="w-[90px] h-[90px] bg-input-background rounded-xl flex items-center justify-center max-sm:w-[80px] max-sm:h-[80px]"
                   >
                     <Image
-                      className="object-contain w-2/3 "
-                      src={product.variation.images[0] as string}
+                      className="object-contain w-2/3 h-11/12"
+                      src={product.selectedVariation.images[0] as string}
                       width={75}
                       height={75}
                       alt={product.name as string}
@@ -72,54 +107,70 @@ export default function Cart(){
                 >
                   <div className="flex flex-col justify-between min-[860px]:h-[90px] min:[860px]:max-w-[200px] max-[860px]:justify-center">
                     <Link
-                      href={`products/${product.slug}?variation=${product.variation.id}`}
+                      href={`products/${product.slug}?variation=${product.selectedVariation.id}`}
                       className=" text-sm font-medium leading-4 line-clamp-2 max-sm:text-xs"
                     >
                       {product.name}
                     </Link>
-
-                    <Button
-                      variant="secondary"
-                      customStyle="border-1 py-0 px-1 max-w-[90px] rounded-lg mt-1 max-sm:px-0.2"
-                    >
-                      <Image
-                        src="/icons/variations-icon.svg"
-                        width={25}
-                        height={25}
-                        alt="variations icon" 
-                      />
-                      <span
-                        className="text-sm max-sm:text-xs"
+                    
+                    <div>
+                      
+                      <Button
+                        onClick={() => {
+                          setShowing(true)
+                          console.log(product)
+                          setSelectingProductVariation({
+                            prevProductId:product.id,
+                            prevVariationId: product.selectedVariation.id,
+                            product
+                          })
+                        }}
+                        variant="secondary"
+                        customStyle="border-1 py-0 px-1 max-w-[90px] rounded-lg mt-1 max-sm:px-0.2"
                       >
-                        Variações
-                      </span>
-                    </Button>
+                        <Image
+                          src="/icons/variations-icon.svg"
+                          width={25}
+                          height={25}
+                          alt="variations icon" 
+                        />
+                        <span
+                          className="text-sm max-sm:text-xs"
+                        >
+                          Variações
+                        </span>
+                      </Button>                      
+                    </div>
+
                   </div>
                   <div className="flex flex-col justify-between flex-nowrap text-nowrap items-center h-[90px] max-w-[100px] max-[860px]:h-auto">
                     <span
-                      className="text-sm font-medium max-[860px]:hidden"
+                      className="text-sm font-medium max-[860px]:showing"
                     >
                       Preço
                     </span>
                     <span
                       className="text-sm font-medium"
                     >
-                      R$ {product.variation.price}
+                      R$ {product.selectedVariation.price}
                     </span>
                   </div>
                   <div className="flex flex-col justify-between items-center h-[90px] max-w-[100px] max-[860px]:h-auto max-[860px]:absolute -right-8 -bottom-3">
                     <span
-                      className="text-sm font-medium max-[860px]:hidden"
+                      className="text-sm font-medium max-[860px]:showing"
                     >
                       Quantidade
                     </span>
                     <QuantityInput
                       onValueChange={(value) => updateProduct({
                         ...product,
-                        quantity: value
+                        selectedVariation: {
+                          ...product.selectedVariation,
+                          quantity: value
+                        }
                       })}
-                      value={product.quantity}
-                      stock={product.variation.stock}
+                      value={product.selectedVariation.quantity}
+                      stock={product.selectedVariation.stock}
                     />
                   </div>
                 </div>
@@ -131,7 +182,7 @@ export default function Cart(){
                   >
                     <button
                       className="absolute right-2 -top-13"
-                      onClick={() => removeProduct(product.id)}
+                      onClick={() => removeProduct(product.id, product.selectedVariation.id)}
                     >
                       <Image
                         className="pointer-events-none"
@@ -248,6 +299,121 @@ export default function Cart(){
           </div>
         </div>
       </div>
+      {selectingProductVariation && (
+      <Modal
+        showing={showing}
+        setShowing={setShowing}
+      >
+        
+          <div
+            className="w-full"
+          >
+            <h2
+              className="font-bold text-lg"
+            >
+              Escolha a variação
+            </h2>
+            
+            <div
+              className="flex flex-row w-full justify-between"
+            >
+              <div
+                className="flex py-2 gap-1 items-center w-full"
+              >
+                <div
+                  className="w-[60px] h-[60px] rounded-2xl"
+                >
+                  <Image
+                    className="object-contain w-full h-full"
+                    src={selectingProductVariation?.product.selectedVariation?.images[0]|| ""}
+                    width={45}
+                    height={45}
+                    alt="variation picture"
+                  />
+                </div>
+                <div>
+                  <h2
+                    className="text-base font-medium leading-4 line-clamp-2 max-sm:text-sm"
+                  >
+                    {selectingProductVariation.product.selectedVariation.name}
+                  </h2>
+                  <p
+                    className="text-base font-semibold"
+                  >
+                    R$ {selectingProductVariation?.product.selectedVariation?.price}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between items-center  max-w-[100px] max-[860px]:h-auto">
+                <span
+                  className="text-sm font-medium max-[860px]:showing"
+                >
+                  Quantidade
+                </span>
+                <QuantityInput
+                  onValueChange={(value) => setSelectingProductVariation({
+                    ...selectingProductVariation,
+                    product: {
+
+                      ...selectingProductVariation.product,
+                      selectedVariation: {
+                        ...selectingProductVariation.product.selectedVariation,
+                        quantity: value
+                      }
+                    }
+       
+                  })}
+                  value={selectingProductVariation.product.selectedVariation.quantity}
+                  stock={selectingProductVariation.product.selectedVariation.stock}
+                />
+              </div>
+            </div>
+            <div
+              className="inline-flex flex-row flex-wrap w-full max-w-[290px] gap-1 my-4"
+            >
+              {selectingProductVariation.product?.variations?.map((singleVariation) => (
+                <div
+                  key={singleVariation.id}
+                  className={`flex w-[50px] h-[50px] rounded-xl overflow-hidden
+                    ${selectingProductVariation.product.selectedVariation.id === singleVariation.id? "border-3 border-fading-text": ""
+                  }`}
+                  onClick={() => setSelectingProductVariation(({
+                    ...selectingProductVariation,
+                    product: {
+                      ...selectingProductVariation.product,
+                      selectedVariation:{
+                        ...singleVariation,
+                        quantity: 1
+                      }
+                    }
+                  }))}
+                >
+                  <Image
+                    className="object-contain w-full h-full"
+                    src={singleVariation.images[0]|| ""}
+                    width={45}
+                    height={45}
+                    alt="variation picture"
+                  />
+                </div>
+              ))}
+
+            </div>
+
+            <Button
+              onClick={() => {
+                // console.log((selectingProductVariation))
+                changeProductVariation(selectingProductVariation)
+                setSelectingProductVariation(null)
+              }}
+            >
+              Concluir
+            </Button>
+          </div>
+       
+
+      </Modal> )}
     </div>
   )
 }

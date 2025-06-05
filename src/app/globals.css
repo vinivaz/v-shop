@@ -6,7 +6,8 @@
   --color-void: #F5F5F5;
   --color-product-bg: #F2F2F2;
   --color-dark-text: #2F2E2E;
-  --color-fading-text: #767676;
+  /* --color-fading-text: #767676; */
+  --color-fading-text: #AEAEAE;
   --color-input-background: #F4f4f4;
   --color-secondary-border: #D9D9D9;
 }

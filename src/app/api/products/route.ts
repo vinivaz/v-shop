@@ -23,7 +23,9 @@ export async function GET(request: Request) {
 
   try{
 
-    const products = await prisma.product.findMany()
+    const products = await prisma.product.findMany({
+      include: { variations: true },
+    })
 
     const smartphones = products.filter(product => product.category === "smartphone")
     const consoles = products.filter(product => product.category === "console")

@@ -17,6 +17,8 @@ type Variations = {
   stock: number;
   price: number;
   images: string[];
+  productId: string;
+  quantity: number;
 };
 
 type Product = {
@@ -47,15 +49,12 @@ export function ProductButtons ({
       variant="secondary"
         customStyle="max-w-[40px] p-1"
         onClick={() => {
-          console.log({
-          ...product,
-          variation: product.variations[variationIndex],
-          quantity: 1
-        })
           addProduct({
           ...product,
-          variation: product.variations[variationIndex],
-          quantity: 1
+          selectedVariation: {
+            ...product.variations[variationIndex],
+            quantity: 1
+          },
         })}
       }
     >

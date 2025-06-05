@@ -1,6 +1,6 @@
 "use client"
 
-import { InputHTMLAttributes, useState } from "react";
+import { InputHTMLAttributes, useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
 
@@ -16,6 +16,16 @@ export function QuantityInput(props:InputProps){
   const { stock, value = 1, onValueChange, containerClass = "", inputClass = "", ...rest } = props;
 
   const [quantity, setQuantity] = useState<number>(value)
+
+  useEffect(() => {
+    if(quantity <= stock && quantity > 0)return;
+      onValueChange(1)
+      setQuantity(1)
+  },[stock])
+
+  useEffect(() => {
+      setQuantity(value)
+  },[value])
 
   return(
     <div
