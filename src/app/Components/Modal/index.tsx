@@ -28,7 +28,7 @@ const Modal = ({
       >
       </div>
       <div
-        className={`w-full max-w-[500px] flex flex-col p-5 bg-white rounded-3xl absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]  ${showing? "":"hidden"}`}
+        className={`w-full max-sm:w-11/12 max-w-[500px] flex flex-col p-5 bg-white rounded-3xl absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]  ${showing? "":"hidden"}`}
       >
 
         <div

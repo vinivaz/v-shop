@@ -37,7 +37,18 @@ type ProductProps = {
 
 
 export function Product({rating, data}:ProductProps){
+
+
   const { addProduct } = useCartStore()
+
+  function isValidHttpUrl(str: string): boolean {
+  try {
+    const url = new URL(str);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch (_) {
+    return false;
+  }
+}
 
   return(
     <div
@@ -47,15 +58,18 @@ export function Product({rating, data}:ProductProps){
         className="max-w-[208px] w-full max-h-[208px] h-full bg-product-bg flex justify-center items-center rounded-t-xl"
         href={`products/${data.slug}`}
       >
-        {data.mainImage &&(
+        {data.mainImage && isValidHttpUrl(data.mainImage) &&(
           <Image
-          className="object-cover max-w-[90px] w-full"
-          src={data.mainImage}
-          width={75}
-          height={75}
-          alt={data.name}
-          quality={100}
-        />
+            className="object-cover max-w-[90px] w-full"
+            src={data.mainImage}
+            width={75}
+            height={75}
+            alt={data.name}
+            quality={100}
+            onError={(e) => {
+              e.currentTarget.src = '/image-placeholder.svg';
+            }}
+          />
         )}
         
       </a>
@@ -76,7 +90,7 @@ export function Product({rating, data}:ProductProps){
         >
           {data.name}
         </a>
-        <span className="font-medium text-dark-text py-0.5">R$ {data.price}</span>
+        <span className="font-medium text-dark-text py-0.5">R$ {data.variations[0].price.toFixed(2)}</span>
         <span className="text-xs font-medium text-green-500 py-0.5">R$ 3800 no PIX</span>
         <div className="flex gap-1">
           <button

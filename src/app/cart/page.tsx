@@ -64,17 +64,30 @@ export default function Cart(){
           className="w-full flex flex-col h-full max-md:h-[calc(100%-147px)]"
         >
           <div
-            className="w-full my-2"
+            className="w-full flex justify-between items-end"
           >
-            <h1
-              className="text-lg font-bold text-dark-text max-[500px]:text-base"
+            <div
+              className="w-full my-2"
             >
-              Carrinho de Compras
-            </h1>
-            <p
-              className="text-dark-text text-sm"
-            >{products.length} itens no carrinho</p>
+              <h1
+                className="text-lg font-bold text-dark-text max-[500px]:text-base"
+              >
+                Carrinho de Compras
+              </h1>
+              <p
+                className="text-dark-text text-sm"
+              >{products.length} itens no carrinho</p>
+            </div>
+
+            {products.length > 0 && <Button
+              onClick={() => clearCart()}
+              variant="transparent"
+              customStyle="w-auto text-sm font-semibold text-darker-text mt-0"
+            >
+              Limpar
+            </Button>}
           </div>
+
 
           <div
             className="w-full min-md:h-[calc(100vh-150px)] flex flex-col overflow-auto gap-y-2 max-md:pb-1"
@@ -370,7 +383,7 @@ export default function Cart(){
               </div>
             </div>
             <div
-              className="inline-flex flex-row flex-wrap w-full max-w-[290px] gap-1 my-4"
+              className="inline-flex flex-row flex-wrap w-full  gap-1 my-4 border-1 border-[#ddd] p-2 rounded-xl"
             >
               {selectingProductVariation.product?.variations?.map((singleVariation) => (
                 <div
