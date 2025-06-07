@@ -58,7 +58,7 @@ export default function Cart(){
       className="w-full h-full max-w-[1000px]"
     >
       <div
-        className="w-full flex flex-row items-start justify-center gap-3 py-5 max-md:px-2 max-md:pt-[45px] max-md:py-0 max-md:bg-void max-md:h-screen max-md:absolute top-0 left-0 max-md:gap-0 max-md:flex-col"
+        className="w-full flex flex-row items-start justify-center gap-3 py-5 max-md:px-2 max-md:pt-[45px] max-md:py-0 max-md:bg-void max-md:h-screen max-md:fixed top-0 left-0 max-md:gap-0 max-md:flex-col"
       >
         <div
           className="w-full flex flex-col h-full max-md:h-[calc(100%-147px)]"

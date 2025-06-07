@@ -98,27 +98,55 @@ export default async function Home() {
         <div
           className="w-full h-full flex flex-col "
         >
-          <h3 className="font-medium text-lg py-5">Smartphones</h3>
+          <h3 className="font-medium text-lg py-5">
+            <Image
+              src="/icons/smartphones-section-icon.svg"
+              width={135.5}
+              height={35.53}
+              alt="Smartphones section icon"
+            />
+          </h3>
           <Carousel products={products.smartphones}/>
         </div>
 
         <div
           className="w-full h-full flex flex-col "
         >
-          <h3 className="font-medium text-lg py-5">Videogames</h3>
+          <h3 className="font-medium text-lg py-5">
+            <Image
+              src="/icons/videogames-section-icon.svg"
+              width={129.52}
+              height={35.53}
+              alt="Videogames section icon"
+            />
+          </h3>
           <Carousel products={products.consoles}/>
         </div>
         <div
           className="w-full h-full flex flex-col "
         >
-          <h3 className="font-medium text-lg py-5">Smartwatches</h3>
+          <h3 className="font-medium text-lg py-5">
+            <Image
+              src="/icons/smartwatches-section-icon.svg"
+              width={145.43}
+              height={35.53}
+              alt="Smartwatches section icon"
+            />
+          </h3>
           <Carousel products={products.smartwatches}/>
         </div>
 
         <div
           className="w-full h-full flex flex-col "
         >
-          <h3 className="font-medium text-lg py-5">Headphones</h3>
+          <h3 className="font-medium text-lg py-5">
+            <Image
+              src="/icons/headphones-section-icon.svg"
+              width={127.6}
+              height={35.53}
+              alt="Headphones section icon"
+            />
+          </h3>
           <Carousel products={products.headphones}/>
         </div>
       </div>

@@ -9,7 +9,12 @@ export function Header() {
           href='/'
           className="font-bold ml-10"
         >
-          V-shop
+            <Image 
+              src="/logo.svg" 
+              alt="magnifying glass icon"
+              width={73}
+              height={35}
+            />
         </Link>
         <div 
           className="flex flex-row mr-10"
