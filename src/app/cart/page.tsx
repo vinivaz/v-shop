@@ -1,17 +1,17 @@
 "use client"
 
 // Components
-import { Input } from "../Components/ui/Input";
-import { Button } from "../Components/ui/Button";
-import { QuantityInput } from "../Components/ui/QuantityInput";
-import { SelectOptions } from "../Components/ui/SelectOptions";
+import { Input } from "../../Components/ui/Input";
+import { Button } from "../../Components/ui/Button";
+import { QuantityInput } from "../../Components/ui/QuantityInput";
+import { SelectOptions } from "../../Components/ui/SelectOptions";
 import Image from "next/image";
 import Link from "next/link";
 
 // Hooks
 import { useCartStore } from "../../../store/cartStore";
 import { useState, useEffect } from "react";
-import Modal from "../Components/Modal";
+import Modal from "../../Components/Modal";
 import { Product, Variation } from "@prisma/client";
 
 // import { getProducts } from "@/lib/api/products";

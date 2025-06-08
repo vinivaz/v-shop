@@ -2,21 +2,23 @@
 
 // Components
 import Image from "next/image";
-import { RatingStars } from "./Components/RatingStars";
-import { Product } from "./Components/Product";
-import { Container } from "./Components/ui/Container";
-import { Carousel } from "./Components/Carousel";
+import { RatingStars } from "@/Components/RatingStars";
+import { Product } from "@/Components/Product";
+import { Container } from "@/Components/ui/Container";
+import { Carousel } from "@/Components/Carousel";
 import { getProducts } from "@/lib/api/products";
-import { Hero } from "./Components/Hero";
+import { Hero } from "@/Components/Hero";
 
 
-type Variations = {
+type Variation = {
+  productId: string;
+  id: string;
+  main: boolean;
   name: string,
   stock: number
   price: number;
   images: string[]
-}[]
-
+}
 
 
 type Product = {
@@ -24,11 +26,9 @@ type Product = {
   name: string,
   slug: string,
   category: string,
-  price: number,
-  stock: number,
   description: string,
   mainImage?: string,
-  additionalImages: string[],
+  variations: Variation[]
 }
 
 type FirstPageProps = {

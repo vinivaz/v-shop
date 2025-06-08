@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { calculateShipping } from '../../actions/calculateShipping';
+import { calculateShipping } from '@/app/actions/calculateShipping';
 
 export default function CalculateShippingLib() {
   const [cep, setCep] = useState('');

@@ -8,33 +8,53 @@ import { faHeart as emptyHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as fullHeart } from '@fortawesome/free-solid-svg-icons';
 
 // Hooks
-import { useCartStore } from "../../../../store/cartStore";
+import { useCartStore } from "../../../store/cartStore";
 
-type Variations = {
-  id: string;
+type DatabaseProduct = {
+  id: string,
+  name: string,
+  slug: string,
+  category: string,
+  description: string,
+  mainImage?: string,
+  variations: {
+    main: boolean;
+    name: string;
+    images: string[];
+    stock: number;
+    price: number;
+    id: string;
+    productId: string;
+  }[]
+}
+
+type CartVariation = {
   main: boolean;
   name: string;
+  images: string[];
   stock: number;
   price: number;
-  images: string[];
+  id: string;
   productId: string;
   quantity: number;
-};
+}
 
-type Product = {
-  id: string;
-  name: string;
-  slug: string;
-  category: string;
-  description: string;
-  variations: Variations[];
+type CartProduct = {
+  id: string,
+  name: string,
+  slug: string,
+  category: string,
+  description: string,
+  mainImage?: string,
+  selectedVariation: CartVariation
+  variations: CartVariation[]
 };
 
 export function ProductButtons ({
   product, 
   variationIndex
 }: {
-  product: Product,
+  product: DatabaseProduct,
   variationIndex: number
 }
 ) {
@@ -55,7 +75,7 @@ export function ProductButtons ({
             ...product.variations[variationIndex],
             quantity: 1
           },
-        })}
+        } as CartProduct)}
       }
     >
       <Image src="/icons/add-to-cart-icon.svg" width={25} height={25} alt="add to cart icon" />

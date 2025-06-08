@@ -6,18 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as fullHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as emptyHeart } from "@fortawesome/free-solid-svg-icons";
 import { RatingStars } from "../RatingStars";
-import { useCartStore } from "../../../../store/cartStore";
+import { useCartStore } from "../../../store/cartStore";
 
-type ProductType = {
+
+type DatabaseProduct = {
   id: string,
   name: string,
   slug: string,
   category: string,
-  price: number,
-  stock: number,
   description: string,
   mainImage?: string,
-  additionalImages: string[],
   variations: {
     main: boolean;
     name: string;
@@ -26,13 +24,34 @@ type ProductType = {
     price: number;
     id: string;
     productId: string;
-    quantity: number;
   }[]
+}
+
+type CartVariation = {
+  main: boolean;
+  name: string;
+  images: string[];
+  stock: number;
+  price: number;
+  id: string;
+  productId: string;
+  quantity: number;
+}
+
+type CartProduct = {
+  id: string,
+  name: string,
+  slug: string,
+  category: string,
+  description: string,
+  mainImage?: string,
+  selectedVariation: CartVariation
+  variations: CartVariation[]
 };
 
 type ProductProps = {
   rating: number,
-  data: ProductType;
+  data: DatabaseProduct;
 }
 
 
@@ -106,7 +125,7 @@ export function Product({rating, data}:ProductProps){
                 ...data.variations[0],
                 quantity: 1
               }
-            })}
+            } as CartProduct)}
           >
             <Image
               src="/icons/add-to-cart-icon.svg"

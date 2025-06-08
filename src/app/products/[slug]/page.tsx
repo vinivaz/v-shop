@@ -1,34 +1,35 @@
 "use server"
 
-import { Container } from "@/app/Components/ui/Container";
+import { Container } from "@/Components/ui/Container";
 import { getProductBySlug } from "@/lib/api/products";
-import { ProductDetails } from "@/app/Components/ProductDetails";
+
 import Image from "next/image";
 import Link from "next/link";
-import { RatingStars } from "@/app/Components/RatingStars";
-import { Button } from "@/app/Components/ui/Button";
+import { RatingStars } from "@/Components/RatingStars";
+import { Button } from "@/Components/ui/Button";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as emptyHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as fullHeart } from '@fortawesome/free-solid-svg-icons';
-import { ProductButtons } from "@/app/Components/ProductButtons";
+import { ProductButtons } from "@/Components/ProductButtons";
 
   type Variations = {
     id: string;
+    productId: string;
     main: boolean;
-    name: string,
-    stock: number
+    name: string;
+    stock: number;
     price: number;
-    images: string[]
+    images: string[];
   }
 
   type Product = {
-    id: string,
-    name: string,
-    slug: string,
-    category: string,
-    description: string,
-    mainImage?: string,
-    variations: Variations[]
+    id: string;
+    name: string;
+    slug: string;
+    category: string;
+    description: string;
+    mainImage?: string;
+    variations: Variations[];
   }
   
 
@@ -45,32 +46,30 @@ import { ProductButtons } from "@/app/Components/ProductButtons";
 
     const product: Product = await getProductBySlug(slug);
 
+    function getValidVariationIndex(
+      value: string | null |undefined,
+      variations: Variations[]
+    ): number {
+      if (!value) return 0;
 
+      const asIndex = parseInt(value);
+      if (!isNaN(asIndex) && variations[asIndex]) return asIndex;
 
-  function getValidVariationIndex(
-    value: string | null |undefined,
-    variations: Variations[]
-  ): number {
-    if (!value) return 0;
+      const variationIndexById = variations.findIndex(v => v.id === value);
+      if (variationIndexById !== -1) return variationIndexById;
 
-    const asIndex = parseInt(value);
-    if (!isNaN(asIndex) && variations[asIndex]) return asIndex;
+      return 0;
+    }
 
-    const variationIndexById = variations.findIndex(v => v.id === value);
-    if (variationIndexById !== -1) return variationIndexById;
+    function getValidImageIndex(
+      value: string | null | undefined,
+      images: string[]
+    ): number {
+      const asIndex = parseInt(value || '');
+      if (!isNaN(asIndex) && images[asIndex]) return asIndex;
 
-    return 0;
-  }
-
-  function getValidImageIndex(
-    value: string | null | undefined,
-    images: string[]
-  ): number {
-    const asIndex = parseInt(value || '');
-    if (!isNaN(asIndex) && images[asIndex]) return asIndex;
-
-    return 0;
-  }
+      return 0;
+    }
 
   const variationIndex = getValidVariationIndex(variation, product.variations)
   const imageIndex = getValidImageIndex(image, product.variations[variationIndex].images);

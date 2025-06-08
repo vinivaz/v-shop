@@ -15,11 +15,8 @@ type ProductType = {
   name: string,
   slug: string,
   category: string,
-  price: number,
-  stock: number,
   description: string,
   mainImage?: string,
-  additionalImages: string[],
   variations: {
     main: boolean;
     name: string;
@@ -28,7 +25,6 @@ type ProductType = {
     price: number;
     id: string;
     productId: string;
-    quantity: number;
   }[]
 };
 
