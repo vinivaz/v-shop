@@ -60,7 +60,7 @@ export function ProductButtons ({
 ) {
   const { addProduct } = useCartStore()
 
-  console.log({product, variationIndex})
+
 
   return(
   <div className="w-full max-w-[265px] flex gap-1">
