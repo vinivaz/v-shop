@@ -12,7 +12,10 @@ import Link from "next/link";
 import { useCartStore } from "../../../store/cartStore";
 import { useState, useEffect } from "react";
 import Modal from "../../Components/Modal";
-import { Product, Variation } from "@prisma/client";
+
+import { useSession, signIn, signOut } from 'next-auth/react';
+
+
 
 // import { getProducts } from "@/lib/api/products";
 
@@ -306,7 +309,9 @@ export default function Cart(){
             >
               produtos do carrinho: 0
             </p>
-            <Button>
+            <Button
+              onClick={() => signIn("google")}
+            >
               Finalizar Compra
             </Button>
           </div>

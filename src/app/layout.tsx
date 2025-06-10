@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { AuthProvider } from "./providers"; 
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -32,12 +34,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-void flex items-center flex-col h-full justify-between pt-[45px]">
-        <Header/>
-        <Container>
-          {children}          
-        </Container>
-
-        <Footer/>
+        <AuthProvider>
+          <Header />
+          <Container>
+            {children}
+          </Container>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
