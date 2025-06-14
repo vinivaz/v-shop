@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 
 import { signIn } from "next-auth/react";
-import { signUp } from "@/lib/api/auth";
 
 // Types
 type FormData = {
@@ -20,13 +19,11 @@ type FormData = {
   confirmPassword: string;
 }
 
-export default function SignUp(){
+export default function SignIn(){
 
   const initialFormValues = {
-    name: '',
     email: '',
     password: '',
-    confirmPassword: ''
   }
 
   const { register, handleSubmit, reset, formState: {errors, isSubmitting} } = useForm<FormData>({
@@ -34,27 +31,26 @@ export default function SignUp(){
   })
 
   const onSubmit = async(data: FormData) => {
-    console.log(data)
     try{
 
-      const res = await signUp({
-        name: data.name,
+      const res = await signIn("credentials", {
         email: data.email,
-        password: data.password
-      })
+        password: data.password,
+        redirect: false,
+      });
 
       console.log(res)
+      
+    if (res?.ok) {
 
-      if(!res.error && res.user){
-        await signIn("credentials", {
-          email: data.email,
-          password: data.password,
-          redirect: true,
-          callbackUrl: "/",
-        });
+      window.location.href = "/";
+    } else {
+      if (res?.error === "CredentialsSignin") {
+        console.log("E-mail ou senha inválidos.");
+      } else {
+        console.log("Erro ao entrar. Tente novamente.");
       }
-
-      reset(initialFormValues);
+    }
 
     }catch(error){
       console.log(error)
@@ -97,24 +93,18 @@ export default function SignUp(){
           <h1
            className="text-white text-left w-full font-bold text-xl pl-15 mt-2 z-1 min-md:hidden"
           >
-            Cadastrar
+            Entrar
           </h1>
         </div>
       </div>
       <div
-        className="flex flex-col items-center w-1/2  max-md:w-full z-1 mt-7 px-9 pb-5"
+        className="flex flex-col items-center w-1/2  max-md:w-full z-1 mt-8 px-9 pb-5"
       >
           <h1
            className="text-darker-text  font-bold max-md:hidden "
           >
-            Cadastrar
+            Entrar
           </h1>
-        <Input
-          type="text"
-          label="Nome"
-          placeholder="Digite seu nome"
-          {...register("name", {required: true, minLength: 7})}
-        />
 
         <Input
           type="email"
@@ -129,14 +119,6 @@ export default function SignUp(){
           placeholder="Insira uma senha"
           {...register("password", {required: true, minLength: 7})}
         />
-
-        <Input
-          type="password"
-          label="Confirme a senha"
-          placeholder="Digite a senha novamente"
-          {...register("confirmPassword", {required: true, minLength: 7})}
-        />
-
         <Button
          onClick={() => handleSubmit(onSubmit)()}
         >
@@ -144,7 +126,7 @@ export default function SignUp(){
         </Button>
 
         <span
-         className="text-dark-text font-medium my-2"
+         className="text-dark-text font-medium my-5"
         >
           ou
         </span>
@@ -169,7 +151,7 @@ export default function SignUp(){
           <p
             className="text-sm text-gray-500 mt-5"
           >
-            Já tem uma conta? <Link className="text-dark-text font-medium" href={"/sign-in"}>Clique aqui</Link>
+            Ainda não uma conta? <Link className="text-dark-text font-medium" href={"/sign-up"}>Clique aqui</Link>
           </p>
         </div>
 

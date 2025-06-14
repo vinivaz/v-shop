@@ -6,7 +6,7 @@ import { Input } from "../ui/Input";
 import { SelectOptions } from "../ui/SelectOptions";
 import { TextArea } from "../ui/TextArea";
 import { ImagesSelector } from "../ui/ImagesSelector";
-import { SingleImagesSelector } from "../ui/SingleImageSelector";
+import { registerProduct } from "@/lib/api/products";
 import { Button } from "../ui/Button";
 import { Controller } from "react-hook-form";
 
@@ -105,19 +105,26 @@ export function ProductRegister(){
         })
       );
 
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        body: JSON.stringify({
-          ...data,
-          mainImage: variations[0].images[0],
-          // additionalImages: additionalImageUrls,
-          variations
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // const res = await fetch('/api/products', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     ...data,
+      //     mainImage: variations[0].images[0],
+      //     // additionalImages: additionalImageUrls,
+      //     variations
+      //   }),
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // });
+
+      const res = await registerProduct({
+        ...data,
+        mainImage: variations[0].images[0],
+        variations
+      })
       console.log(res)
+      
       reset(initialFormValues);
 
     }catch(error){
