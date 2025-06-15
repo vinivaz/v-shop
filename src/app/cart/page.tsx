@@ -234,7 +234,7 @@ export default function Cart(){
               className={isActive? "max-md:absolute inset-0 bg-black/50": "hidden"}
             ></div>
             <div
-              className={`w-full flex flex-col max-md:p-5 max-md:max-w-11/12 max-md:absolute top-1/2 left-1/2 max-md:translate-x-[-50%] max-md:translate-y-[-50%]  ${isActive? "bg-white rounded-3xl": "max-md:hidden"}`}
+              className={`w-full flex flex-col max-md:p-5 max-w-[400px] max-md:w-11/12 max-md:absolute top-1/2 left-1/2 max-md:translate-x-[-50%] max-md:translate-y-[-50%]  ${isActive? "bg-white rounded-3xl": "max-md:hidden"}`}
             >
               <h2
                 className="font-bold text-lg"
@@ -310,7 +310,6 @@ export default function Cart(){
               produtos do carrinho: 0
             </p>
             <Button
-              onClick={() => signIn("google")}
             >
               Finalizar Compra
             </Button>

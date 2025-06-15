@@ -98,7 +98,7 @@ export default function SignIn(){
         </div>
       </div>
       <div
-        className="flex flex-col items-center w-1/2  max-md:w-full z-1 mt-8 px-9 pb-5"
+        className="flex flex-col items-center w-1/2  max-md:w-full z-1 mt-8 px-9 max-[400px]:px-5 pb-5"
       >
           <h1
            className="text-darker-text  font-bold max-md:hidden "
@@ -125,8 +125,10 @@ export default function SignIn(){
           Concluir
         </Button>
 
+        <Link className="text-dark-text text-sm font-medium mt-4" href={"/reset-password"}>Esqueci minha senha</Link>
+
         <span
-         className="text-dark-text font-medium my-5"
+         className="text-dark-text font-medium my-4"
         >
           ou
         </span>

@@ -4,10 +4,11 @@
 import { Input } from "@/Components/ui/Input";
 import { Button } from "@/Components/ui/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 // Hooks
 import { useForm } from "react-hook-form";
-import Link from "next/link";
+import { useWarningMessageStore } from "../../../store/warningMessageStore";
 
 import { signIn } from "next-auth/react";
 import { signUp } from "@/lib/api/auth";
@@ -28,6 +29,8 @@ export default function SignUp(){
     password: '',
     confirmPassword: ''
   }
+
+  const show = useWarningMessageStore((state) => state.show)
 
   const { register, handleSubmit, reset, formState: {errors, isSubmitting} } = useForm<FormData>({
     defaultValues: initialFormValues,
@@ -95,6 +98,7 @@ export default function SignUp(){
             alt="dark background"
           />
           <h1
+          
            className="text-white text-left w-full font-bold text-xl pl-15 mt-2 z-1 min-md:hidden"
           >
             Cadastrar
@@ -102,10 +106,11 @@ export default function SignUp(){
         </div>
       </div>
       <div
-        className="flex flex-col items-center w-1/2  max-md:w-full z-1 mt-7 px-9 pb-5"
+        className="flex flex-col items-center w-1/2 max-md:w-full z-1 mt-7 px-9 max-[400px]:px-5 pb-5"
       >
           <h1
-           className="text-darker-text  font-bold max-md:hidden "
+           className="text-darker-text font-bold max-md:hidden "
+           onClick={() => show("Esqueceu sua senha?", "Digite seu e-mail, enviaremos um código para redefinir sua senha.")}
           >
             Cadastrar
           </h1>

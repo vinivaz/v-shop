@@ -11,6 +11,7 @@ config.autoAddCss = false
 import { Header } from "@/Components/Header";
 import { Footer } from "@/Components/Footer";
 import { Container } from "@/Components/ui/Container";
+import { WarningMessage } from "@/Components/ui/WarningMessage";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
             {children}
           </Container>
           <Footer />
+          <WarningMessage />
         </AuthProvider>
       </body>
     </html>

@@ -44,4 +44,6 @@ model User {
   name     String?
   email    String   @unique
   password String?
+  passowordResetToken String?
+  passwordResetExpires DateTime?
 }
