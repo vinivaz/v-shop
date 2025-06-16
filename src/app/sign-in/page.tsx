@@ -6,18 +6,16 @@ import { Button } from "@/Components/ui/Button";
 import Image from "next/image";
 
 // Hooks
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { useWarningMessageStore } from "../../../store/warningMessageStore";
 
 import { signIn } from "next-auth/react";
 
-// Types
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { SignInFormData, signInFormSchema } from "@/validators/sign-in-form-validator";
 
 export default function SignIn(){
 
@@ -26,35 +24,46 @@ export default function SignIn(){
     password: '',
   }
 
-  const { register, handleSubmit, reset, formState: {errors, isSubmitting} } = useForm<FormData>({
+  const show = useWarningMessageStore((state) => state.show)
+
+  const { register, handleSubmit, reset, formState: {errors, isSubmitting}, clearErrors  } = useForm<SignInFormData>({
     defaultValues: initialFormValues,
+    resolver: zodResolver(signInFormSchema)
   })
 
-  const onSubmit = async(data: FormData) => {
-    try{
+  // useEffect(() => {
+  //   const { email, password} = errors;
+  //   if(email) {
+  //     show("Erro no email.", email.message as string)
+  //     return;
+  //   }
+  // }, [errors])
 
-      const res = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
+  const onSubmit = async(data: SignInFormData) => {
+    // try{
 
-      console.log(res)
+    //   const res = await signIn("credentials", {
+    //     email: data.email,
+    //     password: data.password,
+    //     redirect: false,
+    //   });
+
+    //   console.log(res)
       
-    if (res?.ok) {
+    // if (res?.ok) {
 
-      window.location.href = "/";
-    } else {
-      if (res?.error === "CredentialsSignin") {
-        console.log("E-mail ou senha inválidos.");
-      } else {
-        console.log("Erro ao entrar. Tente novamente.");
-      }
-    }
+    //   window.location.href = "/";
+    // } else {
+    //   if (res?.error === "CredentialsSignin") {
+    //     console.log("E-mail ou senha inválidos.");
+    //   } else {
+    //     console.log("Erro ao entrar. Tente novamente.");
+    //   }
+    // }
 
-    }catch(error){
-      console.log(error)
-    }
+    // }catch(error){
+    //   console.log(error)
+    // }
   }
 
   return(
@@ -110,14 +119,17 @@ export default function SignIn(){
           type="email"
           label="E-mail"
           placeholder="Digite seu E-mail"
-          {...register("email", {required: true})}
+          error={errors.email?.message || ""}
+          {...register("email")}
+
         />
 
         <Input
           type="password"
           label="Senha"
           placeholder="Insira uma senha"
-          {...register("password", {required: true, minLength: 7})}
+          error={errors.password?.message || ""}
+          {...register("password")}
         />
         <Button
          onClick={() => handleSubmit(onSubmit)()}

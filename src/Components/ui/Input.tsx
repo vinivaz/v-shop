@@ -8,10 +8,11 @@ type InputProps = {
   label?: string,
   inputClass?: string;
   containerClass?: string;
+  error?: string;
 } & InputHTMLAttributes<HTMLInputElement>
 
 export function Input(props:InputProps){
-  const {label, containerClass = "", inputClass = "", ...rest } = props;
+  const {label, containerClass = "", inputClass = "", error = "", ...rest } = props;
 
   const containerClassName = twMerge("w-full my-1 ", containerClass)
   
@@ -20,7 +21,10 @@ export function Input(props:InputProps){
 
   return(
     <div className={containerClassName}>
-      {label && <label className="ml-3 pb-2 text-sm font-medium">{label}</label>}
+      <div className="w-full flex justify-between items-end">
+        {label && <label className="ml-3 pb-2 text-sm font-medium">{label}</label>}
+        {error && <p className="text-red-500 pb-1 text-sm ">{error}</p>}
+      </div>
       <input
         className={inputClassName}
         {...rest}

@@ -12,14 +12,9 @@ import { useWarningMessageStore } from "../../../store/warningMessageStore";
 
 import { signIn } from "next-auth/react";
 import { signUp } from "@/lib/api/auth";
+import { signUpFormSchema, SignInFormData } from "@/validators/sign-up-form-validator";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-// Types
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 
 export default function SignUp(){
 
@@ -32,11 +27,12 @@ export default function SignUp(){
 
   const show = useWarningMessageStore((state) => state.show)
 
-  const { register, handleSubmit, reset, formState: {errors, isSubmitting} } = useForm<FormData>({
+  const { register, handleSubmit, reset, formState: {errors, isSubmitting} } = useForm<SignInFormData>({
     defaultValues: initialFormValues,
+    resolver: zodResolver(signUpFormSchema)
   })
 
-  const onSubmit = async(data: FormData) => {
+  const onSubmit = async(data: SignInFormData) => {
     console.log(data)
     try{
 
@@ -110,7 +106,6 @@ export default function SignUp(){
       >
           <h1
            className="text-darker-text font-bold max-md:hidden "
-           onClick={() => show("Esqueceu sua senha?", "Digite seu e-mail, enviaremos um código para redefinir sua senha.")}
           >
             Cadastrar
           </h1>
@@ -118,6 +113,7 @@ export default function SignUp(){
           type="text"
           label="Nome"
           placeholder="Digite seu nome"
+          error={errors.name?.message || ""}
           {...register("name", {required: true, minLength: 7})}
         />
 
@@ -125,6 +121,7 @@ export default function SignUp(){
           type="email"
           label="E-mail"
           placeholder="Digite seu E-mail"
+          error={errors.email?.message || ""}
           {...register("email", {required: true})}
         />
 
@@ -132,6 +129,7 @@ export default function SignUp(){
           type="password"
           label="Senha"
           placeholder="Insira uma senha"
+          error={errors.password?.message || ""}
           {...register("password", {required: true, minLength: 7})}
         />
 
@@ -139,6 +137,7 @@ export default function SignUp(){
           type="password"
           label="Confirme a senha"
           placeholder="Digite a senha novamente"
+          error={errors.confirmPassword?.message || ""}
           {...register("confirmPassword", {required: true, minLength: 7})}
         />
 
