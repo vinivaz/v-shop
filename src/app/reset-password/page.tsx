@@ -9,22 +9,18 @@ import Modal from "@/Components/Modal";
 // Hooks
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useWarningMessageStore } from "../../../store/warningMessageStore";
 
 import { signIn } from "next-auth/react";
+import { emailFormSchema, tokenFormSchema, resetPasswordFormSchema, EmailFormData, TokenFormData, ResetPasswordFormData } from "@/validators/reset-password-form-validator";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { sendEmailMessageWithToken, verifyToken, resetPassword } from "@/lib/api/auth";
 
-// Types
-type EmailFormData = {
-  email: string;
+type EmailSent = {
+  status: boolean;
+  email: string | null;
 }
 
-type TokenFormData = {
-  token: string;
-}
-
-type ResetPasswordFormData = {
-  password: string;
-  confirmPassword: string;
-}
 
 export default function ResetPassword(){
 
@@ -41,10 +37,6 @@ export default function ResetPassword(){
     confirmPassword: ''
   }
 
-  const [ emailSent, setEmailSent ] = useState(false)
-
-  const [ changingPassword, setChangingPassword ] = useState(false)
-
   const { 
     register: emailRegister,
     handleSubmit: handleEmailSubmit,
@@ -52,9 +44,11 @@ export default function ResetPassword(){
     formState: {
       errors: emailErrors,
       isSubmitting: isEmailSubmitting
-    } 
+    },
+    watch: watchEmail,
   } = useForm<EmailFormData>({
     defaultValues: emailInitialFormValue,
+    resolver: zodResolver(emailFormSchema)
   })
 
   const { 
@@ -67,6 +61,7 @@ export default function ResetPassword(){
     } 
   } = useForm<TokenFormData>({
     defaultValues: tokenInitialFormValue,
+    resolver: zodResolver(tokenFormSchema)
   })
 
   const { 
@@ -79,67 +74,92 @@ export default function ResetPassword(){
     } 
   } = useForm<ResetPasswordFormData>({
     defaultValues: resetPasswordInitialFormValue,
+    resolver: zodResolver(resetPasswordFormSchema)
   })
+
+  const [ changingPassword, setChangingPassword ] = useState(false)
+
+  const show = useWarningMessageStore((state) => state.show)
+
+  const email = watchEmail("email")
 
   const onEmailSubmit = async(data: EmailFormData) => {
     console.log(data)
-    // try{
+    try{
 
-    //   const res = await signIn("credentials", {
-    //     email: data.email,
-    //     password: data.password,
-    //     redirect: false,
-    //   });
+      const res = await sendEmailMessageWithToken(data);
 
-    //   console.log(res)
+      console.log(res)
+      if (res?.message) {
+        show("Código enviado", res.message)
+
+        return;
+      }
       
-    // if (res?.ok) {
+      if (res?.error) {
+        console.log(res?.error);
+        show("Houve um erro", res.error);
+      }
 
-    //   window.location.href = "/";
-    // } else {
-    //   if (res?.error === "CredentialsSignin") {
-    //     console.log("E-mail ou senha inválidos.");
-    //   } else {
-    //     console.log("Erro ao entrar. Tente novamente.");
-    //   }
-    // }
-
-    // }catch(error){
-    //   console.log(error)
-    // }
+    }catch(error){
+      console.log(error)
+    }
   }
 
   const onTokenSubmit = async(data: TokenFormData) => {
     console.log(data)
-    // try{
 
-    //   const res = await signIn("credentials", {
-    //     email: data.email,
-    //     password: data.password,
-    //     redirect: false,
-    //   });
+    if(!email){
+      show("Houve um erro.", "Por favor insira o seu e-mail.");
+      return;
+    }
 
-    //   console.log(res)
-      
-    // if (res?.ok) {
+    try{
+      const tokenSentAttempt = await verifyToken({email, token: data.token})
 
-    //   window.location.href = "/";
-    // } else {
-    //   if (res?.error === "CredentialsSignin") {
-    //     console.log("E-mail ou senha inválidos.");
-    //   } else {
-    //     console.log("Erro ao entrar. Tente novamente.");
-    //   }
-    // }
+      console.log(tokenSentAttempt)
+      if(tokenSentAttempt.ok){
+        setChangingPassword(true)
+        return;
+      }
 
-    // }catch(error){
-    //   console.log(error)
-    // }
+      const {error} = await tokenSentAttempt.json()
+      if(error){
+        show("Houve um erro.", error)
+      }
+    }catch(err){
+      console.log(err)
+      show("Houve um erro.","Erro ou tentar enviar o código, por favor tente novamente.")
+    }
   }
 
   const onResetPasswordSubmit = async(data: ResetPasswordFormData) => {
     console.log(data)
+    
 
+    if(!email){
+      show("Houve um erro.", "Por favor insira o seu e-mail.");
+      return;
+    }
+
+    try{
+      const resetPassowordAttepmt = await resetPassword({email, password: data.password})
+
+      console.log(resetPassowordAttepmt)
+      if(resetPassowordAttepmt.error){
+        show("Houve um erro", resetPassowordAttepmt.error)
+        return;
+      }
+
+      if(resetPassowordAttepmt.message){
+        resetPasswordFormReset(resetPasswordInitialFormValue)
+        show("Sucesso!", resetPassowordAttepmt.message)
+      }
+
+    }catch(err){
+      console.log(err)
+      show("Houve um erro.","Erro ao tentar redefinir a senha, por favor tente novamente.")
+    }
   }
 
 
@@ -175,37 +195,27 @@ export default function ResetPassword(){
         </div>
 
         <div
-          className="items-end flex flex-row w-full gap-2"
+          className="flex flex-row w-full gap-2"
         >
           <Input
             type="email"
             label="E-mail"
             placeholder="Digite seu E-mail"
+            
+            error={emailErrors.email?.message || ""}
             {...emailRegister("email", {required: true})}
             containerClass="mb-0"
           />
 
           <Button
-            customStyle="max-w-[58px] h-[40px] text-sm"
+            customStyle="max-w-[58px] h-[40px] text-sm mt-7"
             onClick={() => handleEmailSubmit(onEmailSubmit)()}
           >
             Enviar
           </Button>
         </div>
 
-        {!emailSent? (
-          <div
-            className="w-full flex items-start"
-          >
-            <Button 
-              variant="transparent"
-              customStyle="max-w-[150px] text-sm font-semibold pl-0 text-blue-600"
-              onClick={() => setEmailSent(true)}
-            >
-              Já tenho o codigo.
-            </Button>          
-          </div>
-        ):(
+        {!email || email.length > 0 &&(
           <div
             className="w-full mt-9 pt-4 border-t-1 border-t-secondary-border"
           >
@@ -213,6 +223,7 @@ export default function ResetPassword(){
               type="text"
               label="Insira o código"
               placeholder="Digite o código recebido de seu e-mail"
+              error={tokenErrors.token?.message || ""}
               {...tokenRegister("token", {required: true})}
             />
             <Button
@@ -262,6 +273,7 @@ export default function ResetPassword(){
               type="password"
               label="Nova senha"
               placeholder="Digite a nova senha"
+              error={resetPasswordErrors.password?.message || ""}
               {...resetPasswordRegister("password", {required: true, minLength: 6})}
             />
 
@@ -269,6 +281,7 @@ export default function ResetPassword(){
               type="password"
               label="Confirme a senha"
               placeholder="Digite a nova senha novamente"
+              error={resetPasswordErrors.confirmPassword?.message || ""}
               {...resetPasswordRegister("confirmPassword", {required: true, minLength: 6})}
             />
 

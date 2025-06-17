@@ -1,7 +1,15 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginUserWithEmail } from "@/lib/api/auth";
+import { findUserOrCreate, loginUserWithEmail } from "@/lib/api/auth";
+
+type UserProps = {
+    id: string;
+    name: string;
+    email: string;
+    image?: string;
+  }
+
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,12 +26,15 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         
-        const user = await loginUserWithEmail(credentials?.email, credentials?.password);
-        
-        if (user) {
+        try {
+          const user = await loginUserWithEmail(credentials?.email, credentials?.password);
           return user;
+        } catch (error) {
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+          throw new Error("Erro ao fazer login.");
         }
-        return null;
       },
     }),
   ],
@@ -36,14 +47,22 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60,
   },
 callbacks: {
+  async signIn({user, account}) {
+    if (account?.provider === 'google') {
+      await findUserOrCreate(user as UserProps)
+    }
+
+    return true;
+  },
+
   async jwt({ token, user }) {
     if (user) {
-      token.id = user.id; // <-- salva no token
+      token.id = user.id; 
     }
     return token;
   },
   async session({ session, token }) {
-    session.user.id = token.id as string; // <-- usa sempre o mesmo campo
+    session.user.id = token.id as string;
     return session;
   },
 }

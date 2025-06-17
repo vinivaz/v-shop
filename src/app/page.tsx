@@ -40,7 +40,7 @@ type FirstPageProps = {
 
 export default async function Home() {
   const products : FirstPageProps  = await getProducts()
-  console.log(products)
+
   return (
     <>
       <Hero/>

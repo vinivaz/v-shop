@@ -31,39 +31,31 @@ export default function SignIn(){
     resolver: zodResolver(signInFormSchema)
   })
 
-  // useEffect(() => {
-  //   const { email, password} = errors;
-  //   if(email) {
-  //     show("Erro no email.", email.message as string)
-  //     return;
-  //   }
-  // }, [errors])
-
   const onSubmit = async(data: SignInFormData) => {
-    // try{
+    try{
 
-    //   const res = await signIn("credentials", {
-    //     email: data.email,
-    //     password: data.password,
-    //     redirect: false,
-    //   });
+      const res = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
 
-    //   console.log(res)
+      console.log(res)
       
-    // if (res?.ok) {
-
-    //   window.location.href = "/";
-    // } else {
-    //   if (res?.error === "CredentialsSignin") {
-    //     console.log("E-mail ou senha inválidos.");
-    //   } else {
-    //     console.log("Erro ao entrar. Tente novamente.");
-    //   }
-    // }
-
-    // }catch(error){
-    //   console.log(error)
-    // }
+      if (res?.ok) {
+        window.location.href = "/";
+        return;
+      }
+      
+      if (res?.error) {
+        console.log(res?.error);
+        show("Houve um erro", res.error);
+      }
+      
+    }catch(error){
+      console.log(error)
+      show("Houve um erro", "Erro ao entrar. Tente novamente.")
+    }
   }
 
   return(

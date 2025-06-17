@@ -44,7 +44,12 @@ export default function SignUp(){
 
       console.log(res)
 
-      if(!res.error && res.user){
+      if(res.error){
+        show("Erro ou entrar", res.error)
+        return;
+      }
+
+      if(res.user){
         await signIn("credentials", {
           email: data.email,
           password: data.password,

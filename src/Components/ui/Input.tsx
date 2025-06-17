@@ -21,14 +21,12 @@ export function Input(props:InputProps){
 
   return(
     <div className={containerClassName}>
-      <div className="w-full flex justify-between items-end">
-        {label && <label className="ml-3 pb-2 text-sm font-medium">{label}</label>}
-        {error && <p className="text-red-500 pb-1 text-sm ">{error}</p>}
-      </div>
+      {label && <label className="ml-3 pb-2 text-sm font-medium">{label}</label>}
       <input
         className={inputClassName}
         {...rest}
       />
+      {error && <p className="text-red-500 ml-3 text-sm ">{error}</p>}
     </div>
   )
 }

@@ -10,19 +10,19 @@ export async function POST(request: Request) {
 
 
     if (!email || !password) {
-      return NextResponse.json({ message: "E-mail e senha são obrigatórios" }, { status: 400 });
+      return NextResponse.json({ error: "E-mail e senha são obrigatórios" }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !user.password) {
-      return NextResponse.json({ message: "Usuário não encontrado" }, { status: 401 });
+      return NextResponse.json({ error: "Usuário não encontrado" }, { status: 401 });
     }
 
     const isValid = await compare(password, user.password);
 
     if (!isValid) {
-      return NextResponse.json({ message: "Senha incorreta" }, { status: 401 });
+      return NextResponse.json({ error: "Usuário ou senha incorreta" }, { status: 401 });
     }
 
     return NextResponse.json({
@@ -32,6 +32,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.log('Erro: ', error);
-    return NextResponse.json({ message: "Erro interno", error }, { status: 500 });
+    return NextResponse.json({ error: "Erro interno"}, { status: 500 });
   }
 }

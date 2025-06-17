@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
 
     if (!name || !email || !password) {
-      return NextResponse.json({ message: "Preencha todos os campos" }, { status: 400 });
+      return NextResponse.json({ error: "Preencha todos os campos" }, { status: 400 });
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
         name,
         email,
         password: hashedPassword,
+        provider: "crendentials"
       },
     });
 
@@ -41,6 +42,6 @@ export async function POST(request: Request) {
     
   } catch (error) {
     console.log('Erro: ', error);
-    return NextResponse.json({ message: "Erro interno", error }, { status: 500 });
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
