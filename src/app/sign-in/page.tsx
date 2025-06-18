@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useWarningMessageStore } from "../../../store/warningMessageStore";
 
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -92,7 +92,8 @@ export default function SignIn(){
             alt="dark background"
           />
           <h1
-           className="text-white text-left w-full font-bold text-xl pl-15 mt-2 z-1 min-md:hidden"
+            onClick={() => signOut()}
+            className="text-white text-left w-full font-bold text-xl pl-15 mt-2 z-1 min-md:hidden"
           >
             Entrar
           </h1>
