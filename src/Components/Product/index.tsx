@@ -93,7 +93,7 @@ export function Product({rating, data}:ProductProps){
         
       </a>
       <div
-        className="w-full flex flex-col justify-evenly p-2 rounded-b-xl min-h-[156px] bg-white"
+        className="w-full flex flex-col justify-evenly p-2 rounded-b-xl min-h-[150px] bg-white"
       >
         <div className="flex flex-row w-full">
           <div
@@ -110,7 +110,7 @@ export function Product({rating, data}:ProductProps){
           {data.name}
         </a>
         <span className="font-medium text-dark-text py-0.5">R$ {data.variations[0].price.toFixed(2)}</span>
-        <span className="text-xs font-medium text-green-500 py-0.5">R$ 3800 no PIX</span>
+        {/* <span className="text-xs font-medium text-green-500 py-0.5">R$ 3800 no PIX</span> */}
         <div className="flex gap-1">
           <button
             className="bg-darker px-3 py-[3px] text-white rounded-xl"

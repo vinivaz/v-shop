@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-void flex items-center flex-col h-full justify-between pt-[45px]">
+      <body className="bg-void flex items-center flex-col h-full justify-between pt-[var(--navbar-height)] max-md:pt-0 max-md:pb-[var(--navbar-height)]">
         <AuthProvider>
           <Header />
           <Container>
