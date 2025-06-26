@@ -2,6 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
+import { UserPopOver } from "./UserPopOver";
+
+
 
 
 export async function Header() {
@@ -91,43 +94,7 @@ export async function Header() {
             </span>
           </Link>
 
-          {!session?
-          (
-            <>
-              <Link
-                href="/sign-in"
-                className="mx-2 flex items-center font-medium"
-              >
-                Entrar
-              </Link>
-              <Link
-                href="/sign-up"
-                className=" flex items-center font-medium bg-darker text-white mx-2 px-3 rounded-xl"
-              >
-                Cadastrar
-              </Link>
-            </>
-          )
-          :
-          (
-            <div
-  
-              className="mx-2 flex items-center max-md:flex-col"
-            >
-              <Image 
-                src="/icons/user-icon.svg" 
-                alt="user glass icon"
-                width={20}
-                height={20}
-              />
-              <span
-                className="ml-1 text-sm text-darker"
-              >
-                User
-              </span>
-            </div>
-          )
-        }
+          <UserPopOver session={session}/>
 
         </div>
       </div>
