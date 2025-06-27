@@ -57,7 +57,7 @@ export default function Cart(){
       className="w-full h-full max-w-[1000px]"
     >
       <div
-        className="w-full flex flex-row items-start justify-center gap-3 py-5 max-md:px-2 max-md:pb-[var(--navbar-height)] max-md:py-0 max-md:bg-void max-md:h-screen max-md:fixed top-0 left-0 max-md:gap-0 max-md:flex-col"
+        className="w-full flex flex-row items-start justify-center gap-3 py-5 max-md:w-screen max-md:px-2 max-md:pb-[var(--navbar-height)] max-md:py-0 max-md:bg-void max-md:h-screen max-md:fixed top-0 left-0 max-md:gap-0 max-md:flex-col"
       >
         <div
           className="w-full flex flex-col h-full max-md:h-[calc(100%-147px)]"
@@ -317,115 +317,112 @@ export default function Cart(){
         showing={showing}
         setShowing={setShowing}
       >
-        
-          <div
-            className="w-full"
+        <div
+          className="w-full"
+        >
+          <h2
+            className="font-bold text-lg"
           >
-            <h2
-              className="font-bold text-lg"
-            >
-              Escolha a variação
-            </h2>
-            
+            Escolha a variação
+          </h2>
+          
+          <div
+            className="flex flex-row w-full justify-between"
+          >
             <div
-              className="flex flex-row w-full justify-between"
+              className="flex py-2 gap-1 items-center w-full"
             >
               <div
-                className="flex py-2 gap-1 items-center w-full"
+                className="w-[60px] h-[60px] rounded-2xl"
               >
-                <div
-                  className="w-[60px] h-[60px] rounded-2xl"
-                >
-                  <Image
-                    className="object-contain w-full h-full"
-                    src={selectingProductVariation?.product.selectedVariation?.images[0]|| ""}
-                    width={45}
-                    height={45}
-                    alt="variation picture"
-                  />
-                </div>
-                <div>
-                  <h2
-                    className="text-base font-medium leading-4 line-clamp-2 max-sm:text-sm"
-                  >
-                    {selectingProductVariation.product.selectedVariation.name}
-                  </h2>
-                  <p
-                    className="text-base font-semibold"
-                  >
-                    R$ {selectingProductVariation?.product.selectedVariation?.price}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col justify-between items-center  max-w-[100px] max-[860px]:h-auto">
-                <span
-                  className="text-sm font-medium max-[860px]:showing"
-                >
-                  Quantidade
-                </span>
-                <QuantityInput
-                  onValueChange={(value) => setSelectingProductVariation({
-                    ...selectingProductVariation,
-                    product: {
-
-                      ...selectingProductVariation.product,
-                      selectedVariation: {
-                        ...selectingProductVariation.product.selectedVariation,
-                        quantity: value
-                      }
-                    }
-       
-                  })}
-                  value={selectingProductVariation.product.selectedVariation.quantity}
-                  stock={selectingProductVariation.product.selectedVariation.stock}
+                <Image
+                  className="object-contain w-full h-full"
+                  src={selectingProductVariation?.product.selectedVariation?.images[0]|| ""}
+                  width={45}
+                  height={45}
+                  alt="variation picture"
                 />
               </div>
-            </div>
-            <div
-              className="inline-flex flex-row flex-wrap w-full  gap-1 my-4 border-1 border-[#ddd] p-2 rounded-xl"
-            >
-              {selectingProductVariation.product?.variations?.map((singleVariation) => (
-                <div
-                  key={singleVariation.id}
-                  className={`flex w-[50px] h-[50px] rounded-xl overflow-hidden
-                    ${selectingProductVariation.product.selectedVariation.id === singleVariation.id? "border-3 border-fading-text": ""
-                  }`}
-                  onClick={() => setSelectingProductVariation(({
-                    ...selectingProductVariation,
-                    product: {
-                      ...selectingProductVariation.product,
-                      selectedVariation:{
-                        ...singleVariation,
-                        quantity: 1
-                      }
-                    }
-                  }))}
+              <div>
+                <h2
+                  className="text-base font-medium leading-4 line-clamp-2 max-sm:text-sm"
                 >
-                  <Image
-                    className="object-contain w-full h-full"
-                    src={singleVariation.images[0]|| ""}
-                    width={45}
-                    height={45}
-                    alt="variation picture"
-                  />
-                </div>
-              ))}
-
+                  {selectingProductVariation.product.selectedVariation.name}
+                </h2>
+                <p
+                  className="text-base font-semibold"
+                >
+                  R$ {selectingProductVariation?.product.selectedVariation?.price}
+                </p>
+              </div>
             </div>
 
-            <Button
-              onClick={() => {
-                // console.log((selectingProductVariation))
-                changeProductVariation(selectingProductVariation)
-                setSelectingProductVariation(null)
-              }}
-            >
-              Concluir
-            </Button>
-          </div>
-       
+            <div className="flex flex-col justify-between items-center  max-w-[100px] max-[860px]:h-auto">
+              <span
+                className="text-sm font-medium max-[860px]:showing"
+              >
+                Quantidade
+              </span>
+              <QuantityInput
+                onValueChange={(value) => setSelectingProductVariation({
+                  ...selectingProductVariation,
+                  product: {
 
+                    ...selectingProductVariation.product,
+                    selectedVariation: {
+                      ...selectingProductVariation.product.selectedVariation,
+                      quantity: value
+                    }
+                  }
+      
+                })}
+                value={selectingProductVariation.product.selectedVariation.quantity}
+                stock={selectingProductVariation.product.selectedVariation.stock}
+              />
+            </div>
+          </div>
+          <div
+            className="inline-flex flex-row flex-wrap w-full  gap-1 my-4 border-1 border-[#ddd] p-2 rounded-xl"
+          >
+            {selectingProductVariation.product?.variations?.map((singleVariation) => (
+              <div
+                key={singleVariation.id}
+                className={`flex w-[50px] h-[50px] rounded-xl overflow-hidden
+                  ${selectingProductVariation.product.selectedVariation.id === singleVariation.id? "border-3 border-fading-text": ""
+                }`}
+                onClick={() => setSelectingProductVariation(({
+                  ...selectingProductVariation,
+                  product: {
+                    ...selectingProductVariation.product,
+                    selectedVariation:{
+                      ...singleVariation,
+                      quantity: 1
+                    }
+                  }
+                }))}
+              >
+                <Image
+                  className="object-contain w-full h-full"
+                  src={singleVariation.images[0]|| ""}
+                  width={45}
+                  height={45}
+                  alt="variation picture"
+                />
+              </div>
+            ))}
+
+          </div>
+
+          <Button
+            onClick={() => {
+              // console.log((selectingProductVariation))
+              changeProductVariation(selectingProductVariation)
+              setSelectingProductVariation(null)
+            }}
+          >
+            Concluir
+          </Button>
+        </div>
       </Modal> )}
     </div>
   )
