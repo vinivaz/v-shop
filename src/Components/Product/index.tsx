@@ -3,11 +3,17 @@
 // Components
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart as fullHeart } from "@fortawesome/free-regular-svg-icons";
-import { faHeart as emptyHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
 import { RatingStars } from "../RatingStars";
 import { useCartStore } from "../../../store/cartStore";
+import { setFavoriteProduct, unsetFavoriteProduct } from "@/lib/api/products";
 
+
+// Hooks
+import { useRouter } from 'next/navigation';
+import { useProductsStore } from "../../../store/favoriteProductsStore";
+import { useSession } from 'next-auth/react';
 
 type DatabaseProduct = {
   id: string,
@@ -56,18 +62,48 @@ type ProductProps = {
 
 
 export function Product({rating, data}:ProductProps){
+  const router = useRouter();
+
+  const { data: session, status } = useSession();
+  const isLoggedIn = !!session;
 
 
+  const { products, setProducts, toggleFavorite } = useProductsStore()
   const { addProduct } = useCartStore()
+  
 
   function isValidHttpUrl(str: string): boolean {
-  try {
-    const url = new URL(str);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch (_) {
-    return false;
+    try {
+      const url = new URL(str);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch (_) {
+      return false;
+    }
   }
-}
+
+  const handleFavoriteClick = async (productId: string) => {
+    if(!isLoggedIn){
+      return router.push('/sign-in');
+    }
+
+    if(!data.favorite){
+      const newFav = await setFavoriteProduct(productId);
+      if(!newFav.error){
+        toggleFavorite(data.category, data.id, true)
+      }
+
+      return;
+    }
+
+      const unfaved = await unsetFavoriteProduct(productId);
+      console.log(unfaved)
+      if(unfaved.error){
+        return
+      }
+
+      toggleFavorite(data.category, data.id, false)
+
+  } 
 
   return(
     <div
@@ -136,8 +172,9 @@ export function Product({rating, data}:ProductProps){
           </button>
           <button
             className="bg-transparent w-[32px] h-[32px] border rounded-xl border-gray-300"
+            onClick={() => handleFavoriteClick(data.id)}
           >
-            <FontAwesomeIcon icon={fullHeart} />
+            <FontAwesomeIcon icon={data.favorite? fullHeart : emptyHeart} />
           </button>
         </div>
       </div>

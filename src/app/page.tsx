@@ -6,9 +6,16 @@ import { RatingStars } from "@/Components/RatingStars";
 import { Product } from "@/Components/Product";
 import { Container } from "@/Components/ui/Container";
 import { Carousel } from "@/Components/Carousel";
-import { getProducts } from "@/lib/api/products";
+import { getProducts, getFavoriteProducts } from "@/lib/api/products";
 import { Hero } from "@/Components/Hero";
 
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth/authOptions";
+import { prisma } from "@/lib/prisma";
+import { getFavoriteProductsForUser } from "@/lib/api/server/products";
+import { ProductSections } from "@/Components/ProductSections";
+import { faHeadphones } from "@fortawesome/free-solid-svg-icons";
 
 type Variation = {
   productId: string;
@@ -20,7 +27,6 @@ type Variation = {
   images: string[]
 }
 
-
 type Product = {
   id: string,
   name: string,
@@ -31,16 +37,58 @@ type Product = {
   variations: Variation[]
 }
 
+type FavoriteProduct = {
+  id: string;
+  createdAt: Date;
+  productId: string;
+  userId: string;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    category: string;
+    mainImage: string;
+    createdAt: Date;
+  };
+}
+
 type FirstPageProps = {
-  smartphones: Product[],
-  consoles: Product[],
-  smartwatches: Product[],
-  headphones: Product[]
+  smartphone: Product[],
+  console: Product[],
+  smartwatch: Product[],
+  headphone: Product[]
 }
 
 export default async function Home() {
-  const products : FirstPageProps  = await getProducts()
+  const products : Product[] = await getProducts()
 
+  const session = await getServerSession(authOptions);
+  const user = session?.user
+    ? await prisma.user.findUnique({ where: { email: session.user.email! } })
+    : null;
+
+  let favoriteProductIds: string[] = [];
+
+  if (user) {
+    const favorites = await getFavoriteProductsForUser(user.id);
+    favoriteProductIds = favorites.map((fav) => fav.productId);
+  }
+
+  const enrichedProducts = products.map((product) => ({
+    ...product,
+    favorite: favoriteProductIds.includes(product.id),
+  }));
+
+  const productsGroupedByCategory = {
+    smartphone:  enrichedProducts.filter(product => product.category === "smartphone"),
+    console:  enrichedProducts.filter(product => product.category === "console"),
+    smartwatch:  enrichedProducts.filter(product => product.category === "smartwatch"),
+    headphone:  enrichedProducts.filter(product => product.category === "headphone")
+  }
+  // const favoriteProducts = user ? await getFavoriteProductsForUser(user.id) : [];
+
+  // console.log(favoriteProducts)
   return (
     <>
       <Hero/>
@@ -91,8 +139,9 @@ export default async function Home() {
           />
         </div>
       </div>
+      <ProductSections products={productsGroupedByCategory}/>
 
-      <div
+      {/* <div
         className="w-full my-8 "
       >
         <div
@@ -149,7 +198,7 @@ export default async function Home() {
           </h3>
           <Carousel products={products.headphones}/>
         </div>
-      </div>
+      </div> */}
     </>
 
   );

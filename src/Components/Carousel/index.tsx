@@ -35,8 +35,6 @@ type CarouselProps = {
 export function Carousel({products}: CarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel()
 
-
-
   const handleNext = () => {
     emblaApi?.scrollNext()
   }

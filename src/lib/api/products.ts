@@ -57,3 +57,33 @@ export async function registerProduct(data: ReadyData) {
     },
   });
 }
+
+
+export async function getFavoriteProducts() {
+  const res = await fetch(`${rootURL}/api/products/favorites`);
+  return res.json();
+};
+
+
+export async function setFavoriteProduct(productId: string) {
+  const res = await fetch(`${rootURL}/api/products/favorites`, {
+    method: 'POST',
+    body: JSON.stringify({productId}),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return res.json();
+};
+
+export async function unsetFavoriteProduct(productId: string) {
+  const res = await fetch(`${rootURL}/api/products/favorites`, {
+    method: 'DELETE',
+    body: JSON.stringify({productId}),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return res.json();
+};

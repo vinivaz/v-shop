@@ -27,17 +27,19 @@ export async function GET(request: Request) {
       include: { variations: true },
     })
 
-    const smartphones = products.filter(product => product.category === "smartphone")
-    const consoles = products.filter(product => product.category === "console")
-    const smartwatches = products.filter(product => product.category === "smartwatch")
-    const headphones = products.filter(product => product.category === "headphone")
+    // const smartphones = products.filter(product => product.category === "smartphone")
+    // const consoles = products.filter(product => product.category === "console")
+    // const smartwatches = products.filter(product => product.category === "smartwatch")
+    // const headphones = products.filter(product => product.category === "headphone")
 
-    return NextResponse.json({
-      smartphones,
-      consoles,
-      smartwatches,
-      headphones
-    });
+    // return NextResponse.json({
+    //   smartphones,
+    //   consoles,
+    //   smartwatches,
+    //   headphones
+    // });
+
+    return NextResponse.json(products);
 
   } catch (error) {
     console.error('Erro ao criar produto:', error);
