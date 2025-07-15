@@ -1,41 +1,27 @@
 "use client"
 
-import React, {useEffect} from 'react'
+import React, { useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
-import { useProductsStore } from '../../../store/productsStore';
 
 // Components
 import { Product } from '../Product';
 import Image from 'next/image';
 
 // Style
-import "./Carousel.css"
+import "./Carousel.css";
 
-type ProductType = {
-  id: string,
-  name: string,
-  slug: string,
-  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
-  description: string,
-  mainImage?: string,
-  variations: {
-    main: boolean;
-    name: string;
-    images: string[];
-    stock: number;
-    price: number;
-    id: string;
-    productId: string;
-  }[];
-  favorite: boolean;
-};
+// Types
+import type { Product as ProductType } from '@/types/product';
 
-type CarouselProps = {
-  products: ProductType[];
-}
 
-export function Carousel({products}: CarouselProps) {
-  const {toggleFavorite} = useProductsStore()
+export function Carousel({products: serverProducts}: {products: ProductType[]}) {
+
+  const [ products, setProducts ] = useState(serverProducts)
+
+  const toggleFavorite = (product: ProductType, value: boolean) => {
+    setProducts(products!.map((singleProduct) => singleProduct.id === product.id ? { ...singleProduct, favorite: value } : singleProduct))
+  }
+
   const [emblaRef, emblaApi] = useEmblaCarousel()
 
   const handleNext = () => {
@@ -52,7 +38,11 @@ export function Carousel({products}: CarouselProps) {
         <div className="embla__container">
           {products.map((product, index) => (
             <div key={index} className="embla__slide">
-              <Product data={product} rating={5} toggleFavorite={toggleFavorite}/>
+              <Product
+                data={product}
+                rating={5}
+                toggleFavorite={() => toggleFavorite(product, !product.favorite)}
+              />
             </div>
           ))}
         </div>

@@ -1,37 +1,20 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type Variation = {
-  productId: string;
-  id: string;
-  main: boolean;
-  name: string;
-  stock: number;
-  price: number;
-  images: string[];
-  quantity: number;
-}
+// Types
+import type { CartProduct } from "@/types/cart";
 
-type Product = {
-  id: string;
-  name: string;
-  slug: string;
-  category: string;
-  description: string;
-  selectedVariation: Variation;
-  variations: Variation[]
-}
 
 type changingProductVariationProp = {
   prevProductId: string;
   prevVariationId: string;
-  product: Product;
+  product: CartProduct;
 }
 
 export type CartStore = {
-  products: Product[];
-  addProduct: (product: Product) => void;
-  updateProduct: (product: Product) => void;
+  products: CartProduct[];
+  addProduct: (product: CartProduct) => void;
+  updateProduct: (product: CartProduct) => void;
   removeProduct: (productId: string, variationId: string) => void;
   changeProductVariation: (data: changingProductVariationProp) => void;
   clearCart: () => void;
@@ -80,7 +63,6 @@ export const useCartStore = create<CartStore>()(
 
             if(existing) {
               
-
               return {
                 products: [
                   ...state.products.filter((singleProduct) => (singleProduct.id !== existing.id || singleProduct.selectedVariation.id !== existing.selectedVariation.id) && (singleProduct.id !== prevProductId || singleProduct.selectedVariation.id !== prevVariationId)),
@@ -96,30 +78,6 @@ export const useCartStore = create<CartStore>()(
               )
             }
           }),
-          // updateProductQuantity: (product:Product) =>
-          // set((state) => {
-          //   const existing = state.products.find((productItem) => 
-          //     productItem.id === product.id
-          //   && 
-          //     productItem.selectedVariation.id === product.selectedVariation.id
-          //   );
-
-          //   return {
-          //     products: state.products.map((productItem) => 
-          //       productItem.id === product.id  &&
-          //       productItem.selectedVariation.id === product.selectedVariation.id
-          //       ? {
-          //           ...product,
-          //           selectedVariation:{
-          //             ...product.selectedVariation,
-          //             quantity: product.selectedVariation.quantity
-          //           }
-
-          //         }
-          //       : productItem
-          //     )
-          //   }
-          // }),
         updateProduct: (product) =>
           set((state) => {
             return {

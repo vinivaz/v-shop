@@ -1,78 +1,27 @@
 "use client"
 
 // Hooks
-import { useEffect } from "react";
-import { useProductsStore } from "../../../store/productsStore";
 
 // Components
 import Image from "next/image";
 import { Carousel } from "../Carousel";
 
 // Types
-type Variation = {
-  productId: string;
-  id: string;
-  main: boolean;
-  name: string,
-  stock: number
-  price: number;
-  images: string[]
-}
+import type { Product as ProductType } from "@/types/product";
 
-type Product = {
-  id: string,
-  name: string,
-  slug: string,
-  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
-  description: string,
-  mainImage?: string,
-  variations: {
-    main: boolean;
-    name: string;
-    images: string[];
-    stock: number;
-    price: number;
-    id: string;
-    productId: string;
-  }[];
-  favorite: boolean;
-}
-
-type FavoriteProduct = {
-  id: string;
-  createdAt: Date;
-  productId: string;
-  userId: string;
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    category: string;
-    mainImage: string;
-    createdAt: Date;
-  };
-}
 
 type FirstPageProps = { 
   products: {
-    smartphone: Product[],
-    console: Product[],
-    smartwatch: Product[],
-    headphone: Product[]    
+    smartphone: ProductType[],
+    console: ProductType[],
+    smartwatch: ProductType[],
+    headphone: ProductType[]    
   };
-  // favoriteProducts: FavoriteProduct[];
 }
 
 
-export const ProductSections = ({products: serverProducts}: FirstPageProps) => {
-  const {products, setProducts } = useProductsStore()
+export const ProductSections = ({products}: FirstPageProps) => {
 
-  useEffect(() => {
-    // setFavoriteProducts(favoriteProducts)
-    setProducts(serverProducts)
-  }, [serverProducts, setProducts])
-  console.log(serverProducts)
   return (
       <div
         className="w-full my-8 "

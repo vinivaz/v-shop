@@ -7,44 +7,23 @@ import { QuantityInput } from "../../Components/ui/QuantityInput";
 import { SelectOptions } from "../../Components/ui/SelectOptions";
 import Image from "next/image";
 import Link from "next/link";
+import Modal from "../../Components/Modal";
 
 // Hooks
 import { useCartStore } from "../../../store/cartStore";
 import { useState, useEffect } from "react";
-import Modal from "../../Components/Modal";
-
 import { useSession, signIn, signOut } from 'next-auth/react';
 
-
-
-// import { getProducts } from "@/lib/api/products";
-
-type CartVariation = {
-  id: string;
-  main: boolean;
-  name: string;
-  stock: number;
-  price: number;
-  images: string[];
-  productId: string;
-  quantity: number;
-};
-
-type CartProduct = {
-  id: string;
-  name: string;
-  slug: string;
-  category: string;
-  description: string;
-  selectedVariation: CartVariation;
-  variations: CartVariation[];
-}
+// Types
+import type { CartProduct } from "@/types/cart";
 
 type changingProductVariationProp = {
   prevProductId: string;
   prevVariationId: string;
   product: CartProduct;
 }
+
+
 
 export default function Cart(){
   const { products, changeProductVariation, updateProduct, removeProduct, clearCart } = useCartStore();

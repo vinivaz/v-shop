@@ -2,10 +2,6 @@
 
 // Components
 import Image from "next/image";
-import { RatingStars } from "@/Components/RatingStars";
-import { Product } from "@/Components/Product";
-import { Container } from "@/Components/ui/Container";
-import { Carousel } from "@/Components/Carousel";
 import { getProducts, getFavoriteProducts } from "@/lib/api/products";
 import { Hero } from "@/Components/Hero";
 
@@ -15,62 +11,21 @@ import { authOptions } from "@/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import { getFavoriteProductsForUser } from "@/lib/api/server/products";
 import { ProductSections } from "@/Components/ProductSections";
-import { faHeadphones } from "@fortawesome/free-solid-svg-icons";
 
-type Variation = {
-  productId: string;
-  id: string;
-  main: boolean;
-  name: string,
-  stock: number
-  price: number;
-  images: string[]
-}
 
-type Product = {
-  id: string,
-  name: string,
-  slug: string,
-  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
-  description: string,
-  mainImage?: string,
-  variations: {
-    main: boolean;
-    name: string;
-    images: string[];
-    stock: number;
-    price: number;
-    id: string;
-    productId: string;
-  }[];
-  favorite: boolean;
-}
+import type { Product as ProductType } from "@/types/product";
 
-type FavoriteProduct = {
-  id: string;
-  createdAt: Date;
-  productId: string;
-  userId: string;
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    category: string;
-    mainImage: string;
-    createdAt: Date;
-  };
-}
 
 type FirstPageProps = {
-  smartphone: Product[],
-  console: Product[],
-  smartwatch: Product[],
-  headphone: Product[]
+  smartphone: ProductType[],
+  console: ProductType[],
+  smartwatch: ProductType[],
+  headphone: ProductType[]
 }
 
 export default async function Home() {
-  const products : Product[] = await getProducts()
+  const products : ProductType[] = await getProducts()
+  console.log(products)
 
   const session = await getServerSession(authOptions);
   const user = session?.user
@@ -149,65 +104,6 @@ export default async function Home() {
         </div>
       </div>
       <ProductSections products={productsGroupedByCategory}/>
-
-      {/* <div
-        className="w-full my-8 "
-      >
-        <div
-          className="w-full h-full flex flex-col "
-        >
-          <h3 className="font-medium text-lg py-5">
-            <Image
-              src="/icons/smartphones-section-icon.svg"
-              width={135.5}
-              height={35.53}
-              alt="Smartphones section icon"
-            />
-          </h3>
-          <Carousel products={products.smartphones}/>
-        </div>
-
-        <div
-          className="w-full h-full flex flex-col "
-        >
-          <h3 className="font-medium text-lg py-5">
-            <Image
-              src="/icons/videogames-section-icon.svg"
-              width={129.52}
-              height={35.53}
-              alt="Videogames section icon"
-            />
-          </h3>
-          <Carousel products={products.consoles}/>
-        </div>
-        <div
-          className="w-full h-full flex flex-col "
-        >
-          <h3 className="font-medium text-lg py-5">
-            <Image
-              src="/icons/smartwatches-section-icon.svg"
-              width={145.43}
-              height={35.53}
-              alt="Smartwatches section icon"
-            />
-          </h3>
-          <Carousel products={products.smartwatches}/>
-        </div>
-
-        <div
-          className="w-full h-full flex flex-col "
-        >
-          <h3 className="font-medium text-lg py-5">
-            <Image
-              src="/icons/headphones-section-icon.svg"
-              width={127.6}
-              height={35.53}
-              alt="Headphones section icon"
-            />
-          </h3>
-          <Carousel products={products.headphones}/>
-        </div>
-      </div> */}
     </>
 
   );

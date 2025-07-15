@@ -108,7 +108,6 @@ console.log(serverSearchResult)
 
   const toggleFavorite = (product: DatabaseProduct, value: boolean) => {
     setSearchResult(searchResult!.map((singleProduct) => singleProduct.id === product.id ? { ...singleProduct, favorite: value } : singleProduct))
-    
   }
 
   return (

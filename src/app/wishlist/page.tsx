@@ -1,4 +1,21 @@
-export default function WishList(){
+"use server"
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth/authOptions";
+import { prisma } from "@/lib/prisma";
+import { getFavoriteProducts } from "@/lib/api/products";
+import { getFavoriteProductsForUser } from "@/lib/api/server/products";
+
+
+export default async function WishList(){
+  const session = await getServerSession(authOptions);
+  const user = session?.user
+    ? await prisma.user.findUnique({ where: { email: session.user.email! } })
+    : null;
+  
+  const favoriteProducts = user ? await getFavoriteProductsForUser(user.id) : [];
+  
+
   return(
     <div className=" flex flex-col justify-center items-center w-full h-full mt-7">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 py-4">

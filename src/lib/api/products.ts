@@ -1,3 +1,5 @@
+// import { headers } from "next/headers";
+
 type ReadyData = {
   name: string;
   category: string;
@@ -63,6 +65,14 @@ export async function getFavoriteProducts() {
   const res = await fetch(`${rootURL}/api/products/favorites`);
   return res.json();
 };
+
+// export async function getFavoriteProducts() {
+//   const headersList = await headers();
+//   const cookie = headersList.get("cookie");
+  
+//   const res = await fetch(`${rootURL}/api/products/favorites`);
+//   return res.json();
+// };
 
 
 export async function setFavoriteProduct(productId: string) {

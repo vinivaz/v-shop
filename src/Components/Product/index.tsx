@@ -6,67 +6,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
 import { RatingStars } from "../RatingStars";
-import { useCartStore } from "../../../store/cartStore";
 import { setFavoriteProduct, unsetFavoriteProduct } from "@/lib/api/products";
 import { ArcSpinner } from "../ui/ArcSpinner";
 
 // Hooks
 import { useRouter } from 'next/navigation';
-import { useProductsStore } from "../../../store/productsStore";
 import { useSession } from 'next-auth/react';
 import { useState } from "react";
+import { useCartStore } from "../../../store/cartStore";
 
-
-type DatabaseProduct = {
-  id: string,
-  name: string,
-  slug: string,
-  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
-  description: string,
-  mainImage?: string,
-  variations: {
-    main: boolean;
-    name: string;
-    images: string[];
-    stock: number;
-    price: number;
-    id: string;
-    productId: string;
-  }[];
-  favorite: boolean;
-}
-
-type CartVariation = {
-  main: boolean;
-  name: string;
-  images: string[];
-  stock: number;
-  price: number;
-  id: string;
-  productId: string;
-  quantity: number;
-}
-
-type CartProduct = {
-  id: string,
-  name: string,
-  slug: string,
-  category: string,
-  description: string,
-  mainImage?: string,
-  selectedVariation: CartVariation
-  variations: CartVariation[]
-  favorite: boolean;
-};
-
+// Types
+import type { Product as ProductType } from "@/types/product";
+import type { CartProduct } from "@/types/cart";
 
 type ProductProps = {
   rating: number;
-  data: DatabaseProduct;
-  // toggleFavorite: HomeToggleFavorite | SearchToggleFavorite;
-    toggleFavorite: (product: DatabaseProduct, value: boolean) => void;
+  data: ProductType;
+  toggleFavorite: (product: ProductType, value: boolean) => void;
 };
-
 
 export function Product({rating, data, toggleFavorite}:ProductProps){
   const [ loading, setLoading ] = useState(false)
@@ -76,8 +33,6 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
   const { data: session } = useSession();
   const isLoggedIn = !!session;
 
-
-  // const { toggleFavorite } = useProductsStore()
   const { addProduct } = useCartStore()
   
 
