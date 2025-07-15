@@ -14,13 +14,22 @@ type Variation = {
 type Category = 'smartphone' | 'console' | 'smartwatch' | 'headphone';
 
 type Product = {
-  id: string;
-  name: string;
-  slug: string;
-  category: string;
-  description: string;
-  // selectedVariation: Variation;
-  variations: Variation[]
+  id: string,
+  name: string,
+  slug: string,
+  category: Category,
+  description: string,
+  mainImage?: string,
+  variations: {
+    main: boolean;
+    name: string;
+    images: string[];
+    stock: number;
+    price: number;
+    id: string;
+    productId: string;
+  }[];
+  favorite: boolean;
 }
 
 type Products = {
@@ -46,7 +55,7 @@ type FavoriteProduct = {
 type ProductsStore = {
   products: Products;
   setProducts: (Products: Products) => void;
-  toggleFavorite: (category: Category, productId: string, value: boolean) => void;
+  toggleFavorite: (product: Product, value: boolean) => void;
   // favoriteProducts: FavoriteProduct[],
   // setFavoriteProducts: (favoriteProducts: FavoriteProduct[]) => void;
 }
@@ -59,19 +68,16 @@ export const useProductsStore = create<ProductsStore>((set) => ({
     headphone: []
   },
   setProducts: (products: Products) => set({products}),
-  toggleFavorite: (category: Category, productId: string, value: boolean) =>
-    set((state) => {
-      const updatedCategoryProducts = state.products[category]?.map((product) =>
-        product.id === productId ? { ...product, favorite: value } : product
-      ) || [];
-
-      return {
-        products: {
-          ...state.products,
-          [category]: updatedCategoryProducts
-        }
-      };
-    }),
+toggleFavorite: (product, value) =>
+  set((state) => {
+    const updated = {
+      ...state.products,
+      [product.category]: state.products[product.category].map((p) =>
+        p.id === product.id ? { ...p, favorite: value } : p
+      ),
+    };
+    return { products: updated };
+  }),
   // favoriteProducts: [],
   // setFavoriteProducts: (favoriteProducts: FavoriteProduct[]) => set({favoriteProducts})
 }))

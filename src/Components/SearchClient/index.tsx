@@ -3,6 +3,7 @@
 // Hooks
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchStore } from "../../../store/searchStore";
 
 // Components
 import { Input } from "@/Components/ui/Input";
@@ -11,11 +12,12 @@ import { Product } from "@/Components/Product";
 
 import { searchProducts } from "@/lib/api/products";
 
+
 type DatabaseProduct = {
   id: string,
   name: string,
   slug: string,
-  category: string,
+  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
   description: string,
   mainImage?: string,
   variations: {
@@ -26,15 +28,19 @@ type DatabaseProduct = {
     price: number;
     id: string;
     productId: string;
-  }[]
+  }[];
+  favorite: boolean;
 }
 
 const SearchClient = (props: {
   serverSearchResult: DatabaseProduct[] | null;
   initialQuery: string;
-}) => {
-  const {initialQuery, serverSearchResult} = props;
+  favoriteProductIds: string[];
 
+}) => {
+  
+  const {initialQuery, serverSearchResult, favoriteProductIds} = props;
+console.log(serverSearchResult)
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -42,7 +48,9 @@ const SearchClient = (props: {
 
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
 
-  const [ searchResult, setSearchResult ] = useState<DatabaseProduct[] | null>(serverSearchResult)
+  const [ searchResult , setSearchResult ] = useState<DatabaseProduct[] | null>(serverSearchResult)
+  // const { searchResult, setSearchResult, toggleFavorite } = useSearchStore();
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -77,7 +85,11 @@ const SearchClient = (props: {
         const result = await searchProducts(debouncedSearch)
 
         setLoading(false)
-        setSearchResult(result)
+        setSearchResult(result.map((product:DatabaseProduct) => ({
+          ...product,
+          favorite: favoriteProductIds.includes(product.id),
+        })))
+
       }catch(error) {
         setLoading(false)
         console.log(error)
@@ -87,6 +99,17 @@ const SearchClient = (props: {
     searchProductsByText();
     
   }, [debouncedSearch]);
+
+  // useEffect(() => {
+  //   if (serverSearchResult) {
+  //     setSearchResult(serverSearchResult);
+  //   }
+  // }, [serverSearchResult, setSearchResult]);
+
+  const toggleFavorite = (product: DatabaseProduct, value: boolean) => {
+    setSearchResult(searchResult!.map((singleProduct) => singleProduct.id === product.id ? { ...singleProduct, favorite: value } : singleProduct))
+    
+  }
 
   return (
     <div className=" flex flex-col justify-center items-center w-full h-full mt-7">
@@ -131,7 +154,12 @@ const SearchClient = (props: {
           className="grid place-items-center grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 py-4"
         > 
           {searchResult.map((product, index) => (
-            <Product key={index} data={product} rating={5}/>
+            <Product
+              key={index}
+              data={product}
+              rating={5}
+              toggleFavorite={() => toggleFavorite(product, !product.favorite)}
+            />
           ))}
         </div>
       )}

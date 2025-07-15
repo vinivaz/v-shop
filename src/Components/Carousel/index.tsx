@@ -2,6 +2,7 @@
 
 import React, {useEffect} from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
+import { useProductsStore } from '../../../store/productsStore';
 
 // Components
 import { Product } from '../Product';
@@ -14,7 +15,7 @@ type ProductType = {
   id: string,
   name: string,
   slug: string,
-  category: string,
+  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
   description: string,
   mainImage?: string,
   variations: {
@@ -25,7 +26,8 @@ type ProductType = {
     price: number;
     id: string;
     productId: string;
-  }[]
+  }[];
+  favorite: boolean;
 };
 
 type CarouselProps = {
@@ -33,6 +35,7 @@ type CarouselProps = {
 }
 
 export function Carousel({products}: CarouselProps) {
+  const {toggleFavorite} = useProductsStore()
   const [emblaRef, emblaApi] = useEmblaCarousel()
 
   const handleNext = () => {
@@ -49,7 +52,7 @@ export function Carousel({products}: CarouselProps) {
         <div className="embla__container">
           {products.map((product, index) => (
             <div key={index} className="embla__slide">
-              <Product data={product} rating={5}/>
+              <Product data={product} rating={5} toggleFavorite={toggleFavorite}/>
             </div>
           ))}
         </div>

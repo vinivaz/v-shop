@@ -31,10 +31,19 @@ type Product = {
   id: string,
   name: string,
   slug: string,
-  category: string,
+  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
   description: string,
   mainImage?: string,
-  variations: Variation[]
+  variations: {
+    main: boolean;
+    name: string;
+    images: string[];
+    stock: number;
+    price: number;
+    id: string;
+    productId: string;
+  }[];
+  favorite: boolean;
 }
 
 type FavoriteProduct = {

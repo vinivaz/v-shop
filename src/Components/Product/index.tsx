@@ -8,18 +8,20 @@ import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
 import { RatingStars } from "../RatingStars";
 import { useCartStore } from "../../../store/cartStore";
 import { setFavoriteProduct, unsetFavoriteProduct } from "@/lib/api/products";
-
+import { ArcSpinner } from "../ui/ArcSpinner";
 
 // Hooks
 import { useRouter } from 'next/navigation';
-import { useProductsStore } from "../../../store/favoriteProductsStore";
+import { useProductsStore } from "../../../store/productsStore";
 import { useSession } from 'next-auth/react';
+import { useState } from "react";
+
 
 type DatabaseProduct = {
   id: string,
   name: string,
   slug: string,
-  category: string,
+  category: 'smartphone' | 'console' | 'smartwatch' | 'headphone';
   description: string,
   mainImage?: string,
   variations: {
@@ -30,7 +32,8 @@ type DatabaseProduct = {
     price: number;
     id: string;
     productId: string;
-  }[]
+  }[];
+  favorite: boolean;
 }
 
 type CartVariation = {
@@ -53,22 +56,28 @@ type CartProduct = {
   mainImage?: string,
   selectedVariation: CartVariation
   variations: CartVariation[]
+  favorite: boolean;
 };
 
+
 type ProductProps = {
-  rating: number,
+  rating: number;
   data: DatabaseProduct;
-}
+  // toggleFavorite: HomeToggleFavorite | SearchToggleFavorite;
+    toggleFavorite: (product: DatabaseProduct, value: boolean) => void;
+};
 
 
-export function Product({rating, data}:ProductProps){
+export function Product({rating, data, toggleFavorite}:ProductProps){
+  const [ loading, setLoading ] = useState(false)
+
   const router = useRouter();
 
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const isLoggedIn = !!session;
 
 
-  const { products, setProducts, toggleFavorite } = useProductsStore()
+  // const { toggleFavorite } = useProductsStore()
   const { addProduct } = useCartStore()
   
 
@@ -82,26 +91,24 @@ export function Product({rating, data}:ProductProps){
   }
 
   const handleFavoriteClick = async (productId: string) => {
+
     if(!isLoggedIn){
       return router.push('/sign-in');
     }
 
-    if(!data.favorite){
-      const newFav = await setFavoriteProduct(productId);
-      if(!newFav.error){
-        toggleFavorite(data.category, data.id, true)
-      }
+    if(loading)return;
 
-      return;
-    }
+    setLoading(true);
 
-      const unfaved = await unsetFavoriteProduct(productId);
-      console.log(unfaved)
-      if(unfaved.error){
-        return
-      }
+    const action = !data.favorite ? setFavoriteProduct : unsetFavoriteProduct;
+    const result = await action(productId);
 
-      toggleFavorite(data.category, data.id, false)
+    
+    setLoading(false);
+
+    if (result.error) return;
+
+    toggleFavorite(data,  !data.favorite)
 
   } 
 
@@ -171,10 +178,14 @@ export function Product({rating, data}:ProductProps){
             />
           </button>
           <button
-            className="bg-transparent w-[32px] h-[32px] border rounded-xl border-gray-300"
+            className="bg-transparent w-[32px] h-[32px] flex justify-center items-center border rounded-xl border-gray-300"
             onClick={() => handleFavoriteClick(data.id)}
           >
-            <FontAwesomeIcon icon={data.favorite? fullHeart : emptyHeart} />
+            {loading
+              ?<ArcSpinner className="text-darker-text" size={17} />
+              :<FontAwesomeIcon icon={data.favorite? fullHeart : emptyHeart} />
+            }
+            
           </button>
         </div>
       </div>
