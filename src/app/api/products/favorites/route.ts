@@ -3,9 +3,9 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/auth/authOptions";
-import { getFavoriteProductsForUser } from "@/lib/api/server/products";
+import { getFavoriteProductsForUser, getFavoriteProductsBySearch } from "@/lib/api/server/products";
 
-export async function GET() { 
+export async function GET(request: Request) { 
   try {
     const session = await getServerSession(authOptions);
 
@@ -20,10 +20,13 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
- 
-    const favorites = user ? await getFavoriteProductsForUser(user.id) : [];
 
-    return NextResponse.json(favorites.map(f => f.product), { status: 200 });
+    const { searchParams } = new URL(request.url);
+    const term = searchParams.get('q') || '';
+ 
+    const favorites = term ? await getFavoriteProductsBySearch(user.id, term) : await getFavoriteProductsForUser(user.id);
+
+    return NextResponse.json(favorites.map(f => ({...f.product, favorite: true})), { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: "Error"}, { status: 500 });
   }

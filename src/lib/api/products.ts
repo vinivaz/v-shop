@@ -66,6 +66,17 @@ export async function getFavoriteProducts() {
   return res.json();
 };
 
+export async function getFavoritesClientSide(term?: string) {
+  const query = term ? `?q=${encodeURIComponent(term)}` : '';
+
+  const res = await fetch(`/api/products/favorites${query}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Erro ao buscar favoritos");
+  return res.json();
+}
+
 // export async function getFavoriteProducts() {
 //   const headersList = await headers();
 //   const cookie = headersList.get("cookie");

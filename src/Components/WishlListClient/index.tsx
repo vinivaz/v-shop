@@ -1,41 +1,40 @@
 "use client"
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSearchStore } from "../../../store/searchStore";
 
 // Components
-import { Input } from "@/Components/ui/Input";
-import Image from "next/image";
-import { Product } from "@/Components/Product";
+import Image from 'next/image';
+import { Input } from '../ui/Input';
+import { Product } from '../Product';
 
-import { searchProducts } from "@/lib/api/products";
+import { getFavoritesClientSide } from '@/lib/api/products';
 
 // Types
 import type { Product as ProductType } from "@/types/product";
 
-
-const SearchClient = (props: {
+const WishListClient = ({
+  initialQuery,
+  serverSearchResult,
+}
+:
+{
   serverSearchResult: ProductType[] | null;
   initialQuery: string;
-  favoriteProductIds: string[];
-
 }) => {
-  
-  const {initialQuery, serverSearchResult, favoriteProductIds} = props;
-  console.log(serverSearchResult)
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [ search, setSearch ] = useState<string>(initialQuery)
-
+  const [ search, setSearch ] = useState<string>(initialQuery);
+  const [ searchResult , setSearchResult ] = useState<ProductType[] | null>(serverSearchResult);
   const [ debouncedSearch, setDebouncedSearch ] = useState<string>('');
-
-  const [ searchResult , setSearchResult ] = useState<ProductType[] | null>(serverSearchResult)
-  // const { searchResult, setSearchResult, toggleFavorite } = useSearchStore();
-
   const [ loading, setLoading ] = useState(false);
+
+  const handleClick = async() => {
+    const favs = await getFavoritesClientSide("switch")
+    console.log(favs)
+  }
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -48,50 +47,43 @@ const SearchClient = (props: {
       clearTimeout(handler);
     };
   }, [search]);
-    
-  useEffect(() => {
-    if (!debouncedSearch) return;
 
-    setLoading(true)
-
-    const newParams = new URLSearchParams(searchParams.toString());
-    console.log(initialQuery);
-
-    if (search) newParams.set('q', search);
-
-    else newParams.delete('q');
-
-    router.push(`/search?${newParams.toString()}`);
-        
-    const searchProductsByText = async () => {
-      try{
-        
-        const result = await searchProducts(debouncedSearch)
-
-        setLoading(false)
-        setSearchResult(result.map((product:ProductType) => ({
-          ...product,
-          favorite: favoriteProductIds.includes(product.id),
-        })))
-
-      }catch(error) {
-        setLoading(false)
-        console.log(error)
-      }
-    };
-
-    searchProductsByText();
-    
-  }, [debouncedSearch]);
-
-  // useEffect(() => {
-  //   if (serverSearchResult) {
-  //     setSearchResult(serverSearchResult);
-  //   }
-  // }, [serverSearchResult, setSearchResult]);
+    useEffect(() => {
+      if (!debouncedSearch) return;
+  
+      setLoading(true)
+  
+      const newParams = new URLSearchParams(searchParams.toString());
+      console.log(initialQuery);
+  
+      if (search) newParams.set('q', search);
+  
+      else newParams.delete('q');
+  
+      router.push(`/wishlist?${newParams.toString()}`);
+          
+      const searchProductsByText = async () => {
+        try{
+          
+          const result = await getFavoritesClientSide(debouncedSearch)
+  
+          setLoading(false)
+          setSearchResult(result.map((product:ProductType) => ({
+            ...product,
+          })))
+  
+        }catch(error) {
+          setLoading(false)
+          console.log(error)
+        }
+      };
+  
+      searchProductsByText();
+      
+    }, [debouncedSearch]);
 
   const toggleFavorite = (product: ProductType, value: boolean) => {
-    setSearchResult(searchResult!.map((singleProduct) => singleProduct.id === product.id ? { ...singleProduct, favorite: value } : singleProduct))
+    setSearchResult(searchResult!.filter((singleProduct) => singleProduct.id !== product.id ))
   }
 
   return (
@@ -104,7 +96,7 @@ const SearchClient = (props: {
 
           type="text"
           value={search}
-          placeholder="Busque por algum produto"
+          placeholder="Pesquisar entre sua lista de desejos"
           inputClass="bg-[#e6e6e6] py-1.5 pl-9 text-dark-text"
           onChange={(e) => {
             setSearchResult(null)
@@ -123,14 +115,6 @@ const SearchClient = (props: {
           />
         </button>
       </div>
-
-      {search === "" && !loading && (
-        <div className="flex flex-col items-center text-gray-500 mt-10">
-          <Image src="/illustrations/search-illustration.svg" alt="search icon" width={150.24} height={86.93} />
-          <h2 className="mt-2 text-lg font-semibold text-center">Procure por algum de nossos produtos!</h2>
-          <p className="mt-2 text-center">Digite algo para começar a pesquisar</p>
-        </div>
-      )}
 
       {searchResult && searchResult.length > 0 && (
         <div
@@ -182,4 +166,4 @@ const SearchClient = (props: {
   )
 }
 
-export default SearchClient;
+export default WishListClient
