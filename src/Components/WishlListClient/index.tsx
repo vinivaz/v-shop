@@ -49,23 +49,11 @@ const WishListClient = ({
   }, [search]);
 
     useEffect(() => {
-      if (!debouncedSearch) return;
-  
-      setLoading(true)
-  
-      const newParams = new URLSearchParams(searchParams.toString());
-      console.log(initialQuery);
-  
-      if (search) newParams.set('q', search);
-  
-      else newParams.delete('q');
-  
-      router.push(`/wishlist?${newParams.toString()}`);
-          
-      const searchProductsByText = async () => {
+
+      const searchProductsByText = async (text?:string) => {
         try{
           
-          const result = await getFavoritesClientSide(debouncedSearch)
+          const result = await getFavoritesClientSide( text || undefined)
   
           setLoading(false)
           setSearchResult(result.map((product:ProductType) => ({
@@ -77,8 +65,23 @@ const WishListClient = ({
           console.log(error)
         }
       };
+
+      setLoading(true)
+      if (!debouncedSearch) {
+        searchProductsByText()
+        return;
+      }
   
-      searchProductsByText();
+      const newParams = new URLSearchParams(searchParams.toString());
+      console.log(initialQuery);
+  
+      if (search) newParams.set('q', search);
+  
+      else newParams.delete('q');
+  
+      router.push(`/wishlist?${newParams.toString()}`);
+          
+      searchProductsByText(debouncedSearch);
       
     }, [debouncedSearch]);
 

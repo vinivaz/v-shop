@@ -13,12 +13,16 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+
+import { isDev } from "@/utils/devEmails";
+
 type Props = {
   session: Session | null;
 };
 
 export function UserPopOver({session}: Props){
   const [open, setOpen] = useState(false);
+  const [dev, setDev] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,6 +37,13 @@ export function UserPopOver({session}: Props){
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    console.log(session?.user.email)
+    if(!session)return;
+    setDev(!isDev(session.user?.email!))
+    console.log(dev)
+  },[session])
 
   return (
     <>
@@ -85,6 +96,14 @@ export function UserPopOver({session}: Props){
                     >
                       Ver perfil
                     </Link>
+                    { dev && (
+                      <Link
+                        href="/dev-zone"
+                        className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                      >
+                        Dev Zone
+                      </Link>
+                    )}
                     <button
                       onClick={() => signOut()}
                       className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
