@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 // import { slugify } from '@/utils/slugify';
 import { generateUniqueSlug } from '@/utils/generateUniqueSlug';
+import { authOptions } from '@/auth/authOptions';
+import { getServerSession } from 'next-auth';
 
 type UnparsedVariation = {
   main: boolean;
@@ -49,6 +51,12 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try{
+
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return new NextResponse("Não autorizado", { status: 401 });
+    }
 
     const {variations, ...body } = await request.json()
 

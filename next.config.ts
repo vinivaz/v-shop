@@ -12,15 +12,15 @@ const nextConfig: NextConfig = {
   },
     env: {
     NEXTAUTH_URL: isVercel
-      ? `https://${process.env.VERCEL_URL}`
+      ? `https://v-shop-eight.vercel.app`
       : "http://localhost:3000",
 
     NEXT_ROOT_URL: isVercel
-      ? `https://${process.env.VERCEL_URL}`
+      ? `https://v-shop-eight.vercel.app`
       : "http://localhost:3000",
 
     NEXT_PUBLIC_URL: isVercel
-      ? `https://${process.env.VERCEL_URL}`
+      ? `https://v-shop-eight.vercel.app`
       : "http://localhost:3000",
   },
 
