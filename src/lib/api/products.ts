@@ -44,6 +44,7 @@ export async function getProducts() {
     cache: "force-cache",
   });
 
+  console.log(res)
   if (!res.ok) {
     throw new Error("Erro ao buscar produtos");
   }
