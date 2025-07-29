@@ -38,6 +38,7 @@ export async function getProductBySlug(slug: string) {
 
 export async function getProducts() {
 
+  console.log(rootURL)
   const res = await fetch(`${rootURL}/api/products`, {
     next: { revalidate: 60 },
     cache: "force-cache",

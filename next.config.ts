@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const isVercel = !!process.env.VERCEL_URL;
+console.log(process.env.VERCEL_URL)
 
 const nextConfig: NextConfig = {
   images: {

@@ -42,8 +42,8 @@ export async function GET(request: Request) {
     return NextResponse.json(products);
 
   } catch (error) {
-    console.error('Erro ao criar produto:', error);
-    return new NextResponse('Erro ao criar produto', { status: 500 });
+    console.error('Erro ao buscar produtos:', error);
+    return new NextResponse('Erro ao buscar produtos', { status: 500 });
   }
 }
 
