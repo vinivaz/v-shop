@@ -3,13 +3,12 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
 import { UserPopOver } from "./UserPopOver";
-
-
-
+import { isDev } from "@/utils/devEmails";
 
 export async function Header() {
 
   const session = await getServerSession(authOptions);
+  const showDevZoneLink = session ? isDev(session.user?.email!): false
 
   return(
     <nav className=" z-9 w-full h-[var(--navbar-height)] fixed top-0 max-md:bottom-0 max-md:top-auto flex shrink-0 justify-center items-center bg-white">
@@ -94,7 +93,7 @@ export async function Header() {
             </span>
           </Link>
 
-          <UserPopOver session={session}/>
+          <UserPopOver session={session} isDev={showDevZoneLink}/>
 
         </div>
       </div>

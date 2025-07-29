@@ -19,7 +19,7 @@ export default async function DevZone(){
   }
 
   if(!isDev(user.email!)){
-    console.warn("Essa conta não é de um desenvolvedor.")
+    redirect("/");
   }
 
   console.log(session)

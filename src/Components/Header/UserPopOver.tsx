@@ -14,15 +14,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 
-import { isDev } from "@/utils/devEmails";
-
 type Props = {
   session: Session | null;
+  isDev: boolean;
 };
 
-export function UserPopOver({session}: Props){
+export function UserPopOver({session, isDev}: Props){
   const [open, setOpen] = useState(false);
-  const [dev, setDev] = useState(false);
+
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,13 +36,6 @@ export function UserPopOver({session}: Props){
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    console.log(session?.user.email)
-    if(!session)return;
-    setDev(!isDev(session.user?.email!))
-    console.log(dev)
-  },[session])
 
   return (
     <>
@@ -96,7 +88,7 @@ export function UserPopOver({session}: Props){
                     >
                       Ver perfil
                     </Link>
-                    { dev && (
+                    { isDev && (
                       <Link
                         href="/dev-zone"
                         className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
@@ -115,7 +107,6 @@ export function UserPopOver({session}: Props){
             </div>
           )
         }
-
 
         {!session &&
           (
