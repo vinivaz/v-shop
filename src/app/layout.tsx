@@ -25,6 +25,7 @@ import { WarningMessage } from "@/Components/ui/WarningMessage";
 export const metadata = {
   title: "V-shop | Technology that moves you",
   description: "Discover the Omnia Core and other innovative products. Smartphones, gaming consoles, and more — all with modern design and outstanding performance.",
+  keywords: ["Smartphones", "Videogames", "Smartwatches", "Headphones"],
   openGraph: {
     title: "V-shop | Technology that moves you",
     description:
@@ -48,6 +49,16 @@ export const metadata = {
     description: "Tecnologia de ponta com design impressionante. Conheça nossos produtos.",
     images: [`https://${process.env.NEXT_PUBLIC_URL}image-meta.png`],
   },
+    robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: true
+    }
+  }
 }
 
 export default function RootLayout({
