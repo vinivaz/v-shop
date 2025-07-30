@@ -31,12 +31,12 @@ export function Hero() {
             <h1
               className="text-white font-[Zen_Dots] text-3xl max-w-[311.9px] w-full max-[880px]:text-2xl max-[880px]:max-w-[270px] max-[750px]:text-xl max-[750px]:leading-5 max-[750px]:max-w-[200px]"
             >
-              Ut enim ad minim veniam
+              Omnia Core feel the future.
             </h1>
             <p
               className="max-w-[310px] w-full text-white text-wrap text-sm my-2 max-[880px]:text-xs max-[880px]:my-1 max-[880px]:max-w-[205px]"
             >
-              All this running around, try to cover my shadows, something trying
+              A fusão perfeita entre design elegante e desempenho imbatível.
             </p>
             <button
               className="text-white py-2 mt-5 px-14 rounded-2xl bg-lighter max-[880px]:mt-3 max-[800px]:py-1.5 max-[800px]:px-9 max-[800px]:rounded-lg max-[650px]:text-xs"

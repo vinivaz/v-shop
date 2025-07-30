@@ -25,7 +25,6 @@ type FirstPageProps = {
 
 export default async function Home() {
   const products : ProductType[] = await getProducts()
-  console.log(products)
 
   const session = await getServerSession(authOptions);
   const user = session?.user
