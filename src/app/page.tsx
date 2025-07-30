@@ -4,7 +4,7 @@
 import Image from "next/image";
 import { getProducts, getFavoriteProducts } from "@/lib/api/products";
 import { Hero } from "@/Components/Hero";
-
+import Link from "next/link";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
@@ -59,8 +59,8 @@ export default async function Home() {
       <div
         className="w-full flex flex-row justify-between my-5"
       >
-        <div
-          className=""
+        <Link
+          href="/search?q=console"
         >
           <Image
             className="object-contain w-full max-w-52 rounded-3xl"
@@ -70,9 +70,11 @@ export default async function Home() {
             quality={100}
             alt="mini ad background image"
           />
-        </div>
+        </Link>
 
-        <div>
+        <Link
+          href="/search?q=smartphone"
+        >
           <Image
             className="object-contain w-full max-w-52 rounded-3xl"
             src="/ad/smartphones-mini-ad-background.png"
@@ -81,8 +83,10 @@ export default async function Home() {
             quality={100}
             alt="mini ad background image"
           />
-        </div>
-        <div>
+        </Link>
+        <Link
+          href="/search?q=smartwatch"
+        >
           <Image
             className="object-contain w-full max-w-52 rounded-3xl"
             src="/ad/watches-mini-ad-background.png"
@@ -91,8 +95,10 @@ export default async function Home() {
             quality={100}
             alt="mini ad background image"
           />
-        </div>
-        <div>
+        </Link>
+        <Link
+          href="/search?q=headphone"
+        >
           <Image
             className="object-contain w-full max-w-52 rounded-3xl"
             src="/ad/headphones-mini-ad-background.png"
@@ -101,7 +107,7 @@ export default async function Home() {
             quality={100}
             alt="mini ad background image"
           />
-        </div>
+        </Link>
       </div>
       <ProductSections products={productsGroupedByCategory}/>
     </>

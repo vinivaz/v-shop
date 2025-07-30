@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   return(
-    <div
+    <Link
+      href={`/products/smartphone-nova-omnia-core`}
       className=" w-full min-[780px]:aspect-[1000/380] max-[780px]:min-h-[240px] max-[488px]:min-h-[180px] my-6 flex justify-center items-center"
     >
       <div
@@ -59,6 +61,6 @@ export function Hero() {
         </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
