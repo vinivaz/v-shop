@@ -14,6 +14,9 @@ import { useCartStore } from "../../../store/cartStore";
 import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from 'next-auth/react';
 
+import { getOrders } from "@/lib/api/server/orders";
+import { registerOrder } from "@/lib/api/orders";
+
 // Types
 import type { CartProduct } from "@/types/cart";
 
@@ -30,6 +33,21 @@ export default function Cart(){
   const [ isActive, setIsActive ] = useState<boolean>(false);
   const [ showing, setShowing ] = useState(false);
   const [ selectingProductVariation, setSelectingProductVariation ] = useState<changingProductVariationProp|null>(null)
+
+  const handleBuy = async() => {
+    const items = products.map((singleProduct) => {
+      return {
+        productId: singleProduct.id,
+        variationId: singleProduct.selectedVariation.id,
+        quantity: singleProduct.selectedVariation.quantity,
+        price: singleProduct.selectedVariation.price,
+      }
+    })
+
+    const newOrder = await registerOrder({items})
+    // const orders = await getOrders()
+    console.log(newOrder)
+  }
 
   return(
     <div
@@ -285,6 +303,7 @@ export default function Cart(){
               produtos do carrinho: 0
             </p>
             <Button
+              onClick={() => handleBuy()}
             >
               Finalizar Compra
             </Button>
