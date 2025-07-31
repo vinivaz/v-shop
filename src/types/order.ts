@@ -26,4 +26,5 @@ export type OrderType = {
   totalPrice: number;
   userId: string;
   items: OrderItemType[];
+  createdAt: Date
 }

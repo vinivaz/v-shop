@@ -16,8 +16,10 @@ export type CartStore = {
   addProduct: (product: CartProduct) => void;
   updateProduct: (product: CartProduct) => void;
   removeProduct: (productId: string, variationId: string) => void;
+  removeManyProducts: (toRemove: {productId: string, variationId: string}[]) => void;
   changeProductVariation: (data: changingProductVariationProp) => void;
   clearCart: () => void;
+  
 }
 
 export const useCartStore = create<CartStore>()(
@@ -95,6 +97,20 @@ export const useCartStore = create<CartStore>()(
               products: state.products.filter((productItem) => productItem.id !== productId || productItem.selectedVariation.id !== variationId)
             }
           }),
+          removeManyProducts: (toRemove: {productId: string, variationId: string}[]) =>
+            set((state) => {
+              return {
+                products: state.products.filter((productItem) => {
+                  const match = toRemove.some(
+                    (removeItem) =>
+                      removeItem.productId === productItem.id &&
+                      removeItem.variationId === productItem.selectedVariation.id
+                  );
+                  return !match; // mantém os produtos que não estão na lista de remoção
+                })
+              };
+            }),
+
         clearCart: () => 
           set(() => {
           return {products: []}

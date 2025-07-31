@@ -12,7 +12,7 @@ import { Header } from "@/Components/Header";
 import { Footer } from "@/Components/Footer";
 import { Container } from "@/Components/ui/Container";
 import { WarningMessage } from "@/Components/ui/WarningMessage";
-// const geistSans = Geist({
+import { Checkout } from "@/Components/Checkout";
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
 // });
@@ -76,6 +76,7 @@ export default function RootLayout({
           </Container>
           <Footer />
           <WarningMessage />
+          <Checkout/>
         </AuthProvider>
       </body>
     </html>

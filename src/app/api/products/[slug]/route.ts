@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { deleteImageFromFirebase } from "@/services/firebase/storageService";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/auth/authOptions';
 
 
 export async function GET(
@@ -20,7 +22,33 @@ export async function GET(
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json(product, { status: 200 });
+    const session = await getServerSession(authOptions);
+
+    let favorite = false;
+
+    if (session?.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+      });
+
+      if (user) {
+        const favorited = await prisma.favorite.findFirst({
+          where: {
+            userId: user.id,
+            productId: product.id,
+          },
+        });
+
+        favorite = !!favorited;
+      }
+    }
+    
+
+    if (!product) {
+      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
+    }
+
+    return NextResponse.json({...product, favorite}, { status: 200 });
 
   }catch(error){
     console.log(error)

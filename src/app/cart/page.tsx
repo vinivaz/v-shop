@@ -9,13 +9,14 @@ import Image from "next/image";
 import Link from "next/link";
 import Modal from "../../Components/Modal";
 
+
 // Hooks
 import { useCartStore } from "../../../store/cartStore";
 import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from 'next-auth/react';
-
-import { getOrders } from "@/lib/api/server/orders";
-import { registerOrder } from "@/lib/api/orders";
+import { useSearchParams } from 'next/navigation';
+import { useWarningMessageStore } from "../../../store/warningMessageStore";
+import { useCheckoutStore } from "../../../store/checkoutStore";
 
 // Types
 import type { CartProduct } from "@/types/cart";
@@ -26,28 +27,31 @@ type changingProductVariationProp = {
   product: CartProduct;
 }
 
-
-
 export default function Cart(){
   const { products, changeProductVariation, updateProduct, removeProduct, clearCart } = useCartStore();
   const [ isActive, setIsActive ] = useState<boolean>(false);
   const [ showing, setShowing ] = useState(false);
-  const [ selectingProductVariation, setSelectingProductVariation ] = useState<changingProductVariationProp|null>(null)
+  const [ selectingProductVariation, setSelectingProductVariation ] = useState<changingProductVariationProp|null>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-  const handleBuy = async() => {
-    const items = products.map((singleProduct) => {
-      return {
-        productId: singleProduct.id,
-        variationId: singleProduct.selectedVariation.id,
-        quantity: singleProduct.selectedVariation.quantity,
-        price: singleProduct.selectedVariation.price,
-      }
-    })
+  const { showCheckoutScreen, hideCheckoutScreen } = useCheckoutStore()
 
-    const newOrder = await registerOrder({items})
-    // const orders = await getOrders()
-    console.log(newOrder)
-  }
+  const showWarningMessage  = useWarningMessageStore(state => state.show) 
+
+  const handleBuy = async () => {
+    const selectedProducts = products.filter(product =>
+      selectedItems.includes(product.id + product.selectedVariation.id)
+    );
+
+    if (selectedProducts.length === 0) {
+      showWarningMessage("Nenhum item selecionado", "Selecione algum item do carrinho para concluir a compra.")
+      return;
+    }
+
+    showCheckoutScreen(selectedProducts);
+
+  };
+
 
   return(
     <div
@@ -91,12 +95,25 @@ export default function Cart(){
             {products && products.map((product, index) => (
               <div
                 key={index}
-                className="w-full bg-white flex shrink-0 h-[141px] flex-row rounded-3xl items-center justify-evenly px-2 gap-2 max-sm:h-[120px]"
+                className={`w-full bg-white flex shrink-0 h-[141px] flex-row rounded-3xl items-center justify-evenly px-2 gap-2 max-sm:h-[120px] 
+                  ${selectedItems.includes(product.id + product.selectedVariation.id)? "border-2 border-fading-text":""} `}
               >
                 <div
                   className="flex items-center gap-2 w-full max-w-[111px] max-md:max-w-[111px] max-sm:max-w-[97px] max-sm:gap-1"
                 >
-                  <Input type="checkbox" containerClass="w-auto" />
+                  <Input
+                    type="checkbox"
+                    containerClass="w-auto"
+                    checked={selectedItems.includes(product.id + product.selectedVariation.id)}
+                    onChange={(e) => {
+                      const key = product.id + product.selectedVariation.id;
+                      setSelectedItems(prev =>
+                        e.target.checked
+                          ? [...prev, key]
+                          : prev.filter(item => item !== key)
+                      );
+                    }}
+                  />
                   <Link
                     href={`products/${product.slug}?variation=${product.selectedVariation.id}`}
                     className="w-[90px] h-[90px] bg-input-background rounded-xl flex items-center justify-center max-sm:w-[80px] max-sm:h-[80px]"

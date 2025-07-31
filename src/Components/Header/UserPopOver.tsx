@@ -81,12 +81,18 @@ export function UserPopOver({session, isDev}: Props){
                   </span>
                 </div>
                 {open && (
-                  <div className="absolute right-0 -top-28 min-md:top-8 mt-2 w-40 bg-white shadow-lg rounded-lg z-50 p-2">
-                    <Link
+                  <div className="absolute right-0 bottom-14 min-md:top-8 min-md:bottom-auto mt-2 w-40 bg-white shadow-lg rounded-lg z-50 p-2">
+                    {/* <Link
                       href="/profile"
                       className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                     >
                       Ver perfil
+                    </Link> */}
+                    <Link
+                      href="/users/orders"
+                      className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                    >
+                      Minhas Compras
                     </Link>
                     { isDev && (
                       <Link

@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   }
 
   const body = await req.json();
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
   const parsed = BodyDataSchema.safeParse(body);
   console.log(parsed)
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid data", issues: parsed.error.issues }, { status: 400 });
+    return NextResponse.json({ error: "Dados inválidos", issues: parsed.error.issues }, { status: 400 });
   }
 
   try {
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
     }
 
   const { items } = body;
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (!variation || variation.stock < item.quantity) {
-        throw new Error(`Estoque insuficiente para a variação ${item.variationId}`);
+        return NextResponse.json({ error: "Estoque insuficiente :(" }, { status: 401 });
       }
     }
 

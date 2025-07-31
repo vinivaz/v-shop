@@ -9,6 +9,27 @@ export default async function Orders () {
   const orders: OrderType[] = await getOrders()
   console.log(orders)
 
+  const dateConverter = (date:Date) => {
+
+    const createdAt = new Date(date);
+
+    const today = new Date();
+
+    // Verifica se é do mesmo ano
+    const isCurrentYear = createdAt.getFullYear() === today.getFullYear();
+
+    return createdAt.toLocaleString("pt-BR", {
+
+    ...(isCurrentYear ? {} : { year: "numeric" }),
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    // timeZone: "America/New_York",  
+    // hour12: true
+  })
+
+    }
 
   return (
   <div
@@ -23,19 +44,22 @@ export default async function Orders () {
     <div className="w-full flex flex-col justify-center">
       {orders.map((order) => (
         <div
+          key={order.id}
           className="p-3 my-1"
         >
           <span
-            className="font-semibold text-lighter"
+            className="font-semibold text-lighter max-sm:text-sm"
           >
-            Efetuada no dia 9, sex
+            {/* Efetuada no dia 9, sex */}
+            Efetuada no dia {dateConverter(order.createdAt)}
           </span>
           <div
             className="bg-white rounded-xl"
           >
           {order.items.map((item) => (
-
+            
             <div
+              key={item.id}
               className="flex justify-between items-center gap-2 p-2 "
             >
               <div
@@ -49,24 +73,13 @@ export default async function Orders () {
                   className="object-contain w-[35px] h-[35px]"
                 />
                 <div className="flex flex-col justify-center">
-                  <span className="line-clamp-1 max-sm:text-xs">{item.product.name}</span>
+                  <span className="line-clamp-1 max-sm:text-sm">x{item.quantity} {item.product.name}</span>
                   <span
                     className="whitespace-nowrap flex  items-center"
                   >
                     R$ {item.price.toFixed()}
                   </span>
                 </div>
-
-              </div>
-
-              <div
-                className="flex justify-center items-center h-full"
-              >
-                <span
-                className="whitespace-nowrap flex items-center"
-                >
-                  x{item.quantity}
-                </span>
               </div>
             </div>    
          
@@ -74,7 +87,7 @@ export default async function Orders () {
           </div>   
 
           <span
-            className="text-sm font-semibold text-fading-text"
+            className="text-sm font-semibold text-fading-text max-sm:text-xs"
           >
             Agora você pode avaliar esses produtos.
           </span>

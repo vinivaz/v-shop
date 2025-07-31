@@ -8,10 +8,7 @@ const publicRoutes = [
   {path: "/", whenAuthenticated: "next"},
   {path: "/cart", whenAuthenticated: "next"},
   {path: "/search", whenAuthenticated: "next"},
-];
-
-const priavateRoutes = [
-  {path: "", whenAuthenticated: ""}
+  {path: "/products", whenAuthenticated: "next"},
 ];
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/sign-in";
@@ -20,14 +17,14 @@ export function middleware(request: NextRequest){
 
   const path = request.nextUrl.pathname;
 
+
   const authToken = request.cookies.get("next-auth.session-token") || request.cookies.get("__Secure-next-auth.session-token");
   // const token = await getToken({ req:request, secret: process.env.NEXTAUTH_SECRET });
 
   const isPublic = publicRoutes.find((route) =>
-    route.path === path
+    path === route.path || path.startsWith(route.path + "/")
   );
 
-  console.log(isPublic) 
 
   if(!authToken && isPublic){
     return NextResponse.next()
@@ -47,8 +44,6 @@ export function middleware(request: NextRequest){
     redirectURL.pathname = "/";
     return NextResponse.redirect(redirectURL);
   }
-
-
 
   return NextResponse.next();
 }

@@ -14,6 +14,8 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from "react";
 import { useCartStore } from "../../../store/cartStore";
+import { useCheckoutStore } from "../../../store/checkoutStore";
+
 
 // Types
 import type { Product as ProductType } from "@/types/product";
@@ -34,6 +36,8 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
   const isLoggedIn = !!session;
 
   const { addProduct } = useCartStore()
+  const { showCheckoutScreen } = useCheckoutStore()
+  
   
 
   function isValidHttpUrl(str: string): boolean {
@@ -112,6 +116,13 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
         <div className="flex gap-1">
           <button
             className="bg-darker px-3 py-[3px] text-white rounded-xl"
+            onClick={()=> showCheckoutScreen([{
+              ...data,
+              selectedVariation: {
+                ...data.variations[0],
+                quantity: 1
+              }
+            }]as CartProduct[])}
           >
             Comprar
           </button>
@@ -140,7 +151,6 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
               ?<ArcSpinner className="text-darker-text" size={17} />
               :<FontAwesomeIcon icon={data.favorite? fullHeart : emptyHeart} />
             }
-            
           </button>
         </div>
       </div>

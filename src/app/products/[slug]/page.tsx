@@ -1,37 +1,15 @@
 "use server"
 
 import { Container } from "@/Components/ui/Container";
-import { getProductBySlug } from "@/lib/api/products";
+import { getProductBySlugServerSide } from "@/lib/api/server/products";
 
 import Image from "next/image";
 import Link from "next/link";
 import { RatingStars } from "@/Components/RatingStars";
-import { Button } from "@/Components/ui/Button";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as emptyHeart } from '@fortawesome/free-regular-svg-icons';
-import { faHeart as fullHeart } from '@fortawesome/free-solid-svg-icons';
 import { ProductButtons } from "@/Components/ProductButtons";
 
-  type Variations = {
-    id: string;
-    productId: string;
-    main: boolean;
-    name: string;
-    stock: number;
-    price: number;
-    images: string[];
-  }
 
-  type Product = {
-    id: string;
-    name: string;
-    slug: string;
-    category: string;
-    description: string;
-    mainImage?: string;
-    variations: Variations[];
-  }
-  
+  import type { Product, Variation } from "@/types/product";
 
   export default async function Product({
     params,
@@ -44,11 +22,11 @@ import { ProductButtons } from "@/Components/ProductButtons";
     const { slug } = await params;
     const { variation, image } = await searchParams;
 
-    const product: Product = await getProductBySlug(slug);
+    const product: Product = await getProductBySlugServerSide(slug);
 
     function getValidVariationIndex(
       value: string | null |undefined,
-      variations: Variations[]
+      variations: Variation[]
     ): number {
       if (!value) return 0;
 
@@ -73,11 +51,6 @@ import { ProductButtons } from "@/Components/ProductButtons";
 
   const variationIndex = getValidVariationIndex(variation, product.variations)
   const imageIndex = getValidImageIndex(image, product.variations[variationIndex].images);
-    // const variationFromParams = product.variations.find((v) => v.id === vId);
-    // const selectedVariation =
-    //   variationFromParams ||
-    //   product.variations.find((v) => v.main) ||
-    //   product.variations[0];
 
     if (!product) {
       return <div>Produto sem variações disponíveis no momento.</div>;

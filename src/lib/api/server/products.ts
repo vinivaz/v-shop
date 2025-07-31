@@ -57,3 +57,19 @@ export async function getFavoritesServerSide(term?: string) {
   if (!res.ok) throw new Error("Erro ao buscar favoritos");
   return res.json();
 }
+
+export async function getProductBySlugServerSide(slug: string) {
+  const headersList = await headers();
+  const cookie = headersList.get("cookie");
+
+  const res = await fetch(`${rootURL}/api/products/${slug}`, {
+    headers: { Cookie: cookie ?? "" },
+    cache: "no-cache"
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao buscar produtos");
+  }
+
+  return res.json();
+}

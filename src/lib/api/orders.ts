@@ -19,7 +19,7 @@ export async function registerOrder(data: {items: OrderItem[]}) {
     },
   });
   console.log(newOrder)
-  if (!newOrder.ok) throw new Error('Erro ao registrar pedidos');
+  // if (!newOrder.ok) throw new Error('Erro ao registrar pedidos');
 
   return newOrder.json();
 }

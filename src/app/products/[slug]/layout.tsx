@@ -2,14 +2,15 @@ import { getProductBySlug } from "@/lib/api/products";
 import { Metadata } from "next";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string, variation: string }>,
 };
 
 
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const product = await  getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await  getProductBySlug(slug);
 
   return {
     title: `${product.name} | V-shop`,
