@@ -42,7 +42,7 @@ export async function Header() {
             <span
               className="ml-1 text-sm text-darker"
             >
-              Home
+              Início
             </span>
           </Link>
           <Link
@@ -58,7 +58,7 @@ export async function Header() {
             <span
               className="ml-1 text-sm text-darker"
             >
-              Search
+              Busca
             </span>
           </Link>
           <Link
@@ -74,20 +74,19 @@ export async function Header() {
             <span
               className="ml-1 text-sm text-darker"
             >
-              Wishlist
+              Favoritos
             </span>
           </Link>
           <Link
             href='/cart'
             className="mx-2 flex items-center max-md:flex-col relative"
           >
-            
             <div
              className="relative"
             >
               
               <Image 
-                src="/icons/bag-icon.svg" 
+                src="/icons/cart-icon.svg" 
                 alt="magnifying glass icon"
                 width={20}
                 height={20}
@@ -96,7 +95,7 @@ export async function Header() {
             <span
               className="ml-1 text-sm text-darker"
             >
-              Cart
+              Carrinho
             </span>
             <CartItemIndicatior/>
           </Link>

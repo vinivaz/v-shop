@@ -77,7 +77,7 @@ export function UserPopOver({session, isDev}: Props){
                   <span
                     className="ml-1 text-sm text-darker"
                   >
-                    User
+                    Usuário
                   </span>
                 </div>
                 {open && (
@@ -133,7 +133,7 @@ export function UserPopOver({session, isDev}: Props){
                   <span
                     className="ml-1 text-sm text-darker"
                   >
-                    User
+                    Usuário
                   </span>
                 </div>
                 {open && (

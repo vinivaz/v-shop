@@ -56,13 +56,13 @@ export default async function Home() {
     <>
       <Hero/>
       <div
-        className="w-full flex flex-row justify-between my-5"
+        className="w-full flex flex-row gap-1 justify-between my-5"
       >
         <Link
           href="/search?q=console"
         >
           <Image
-            className="object-contain w-full max-w-52 rounded-3xl"
+            className="object-contain w-full max-w-52 "
             src="/ad/videogames-mini-ad-background.png"
             width={259.82}
             height={222.41}
@@ -75,7 +75,7 @@ export default async function Home() {
           href="/search?q=smartphone"
         >
           <Image
-            className="object-contain w-full max-w-52 rounded-3xl"
+            className="object-contain w-full max-w-52"
             src="/ad/smartphones-mini-ad-background.png"
             width={259.82}
             height={222.41}
@@ -87,7 +87,7 @@ export default async function Home() {
           href="/search?q=smartwatch"
         >
           <Image
-            className="object-contain w-full max-w-52 rounded-3xl"
+            className="object-contain w-full max-w-52"
             src="/ad/watches-mini-ad-background.png"
             width={259.82}
             height={222.41}
@@ -99,7 +99,7 @@ export default async function Home() {
           href="/search?q=headphone"
         >
           <Image
-            className="object-contain w-full max-w-52 rounded-3xl"
+            className="object-contain w-full max-w-52"
             src="/ad/headphones-mini-ad-background.png"
             width={259.82}
             height={222.41}
