@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 // Types
+import type { Product as ProductType } from "@/types/product";
 import type { CartProduct } from "@/types/cart";
 
 
@@ -19,7 +20,8 @@ export type CartStore = {
   removeManyProducts: (toRemove: {productId: string, variationId: string}[]) => void;
   changeProductVariation: (data: changingProductVariationProp) => void;
   clearCart: () => void;
-  
+  syncCartWithServer: (serverProducts: ProductType[]) => void;
+
 }
 
 export const useCartStore = create<CartStore>()(
@@ -110,6 +112,41 @@ export const useCartStore = create<CartStore>()(
                 })
               };
             }),
+          syncCartWithServer: (serverProducts) => set((state) => {
+
+            const merged = state.products.map((localProduct) => {
+              
+              const serverProduct = serverProducts.find((singleServerProduct: any) => singleServerProduct.id === localProduct.id);
+              if (!serverProduct) return null;// reject
+
+              const verifiedVariation = serverProduct.variations.find((v: any) => v.id === localProduct.selectedVariation.id) || { ...localProduct.selectedVariation, stock: 0 };
+
+              const quantity = localProduct.selectedVariation.quantity <= verifiedVariation.stock
+                ? localProduct.selectedVariation.quantity
+                : verifiedVariation.stock > 0
+                  ? 1
+                  : 0;
+              return {
+                ...localProduct,
+                
+                name: serverProduct.name,
+                slug: serverProduct.slug,
+                variations: serverProduct.variations,
+                selectedVariation:{
+                  ...localProduct.selectedVariation,
+                  price: verifiedVariation.price,
+                  stock: verifiedVariation.stock,
+                  images: verifiedVariation.images,
+                  quantity,
+                },
+              };
+            })
+            .filter(Boolean) as CartProduct[];
+
+            return {
+              products: merged
+            }
+          }),
 
         clearCart: () => 
           set(() => {

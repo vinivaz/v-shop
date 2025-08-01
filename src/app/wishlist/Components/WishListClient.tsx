@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 // Components
 import Image from 'next/image';
-import { Input } from '../ui/Input';
-import { Product } from '../Product';
+import { Input } from '../../../Components/ui/Input';
+import { Product } from '../../../Components/Product';
 
 import { getFavoritesClientSide } from '@/lib/api/products';
 
@@ -121,7 +121,7 @@ const WishListClient = ({
 
       {searchResult && searchResult.length > 0 && (
         <div
-          className="grid place-items-center grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 py-4"
+          className="grid place-items-center grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 py-4 max-[400px]:gap-2"
         > 
           {searchResult.map((product, index) => (
             <Product

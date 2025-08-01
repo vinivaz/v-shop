@@ -15,7 +15,10 @@ import { useSession } from 'next-auth/react';
 import { useState } from "react";
 import { useCartStore } from "../../../store/cartStore";
 import { useCheckoutStore } from "../../../store/checkoutStore";
+import { useWarningMessageStore } from "../../../store/warningMessageStore";
 
+// Utils
+import { getFirstAvailableVariation } from "@/utils/variationVerifier";
 
 // Types
 import type { Product as ProductType } from "@/types/product";
@@ -37,7 +40,7 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
 
   const { addProduct } = useCartStore()
   const { showCheckoutScreen } = useCheckoutStore()
-  
+  const { show } = useWarningMessageStore()
   
 
   function isValidHttpUrl(str: string): boolean {
@@ -49,7 +52,47 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
     }
   }
 
-  const handleFavoriteClick = async (productId: string) => {
+  // function getFirstAvailableVariation(product: ProductType) {
+  //   return product.variations.find(variation => variation.stock > 0) || null;
+  // }
+
+  const handleBuy = () => {
+    const availableVariation = getFirstAvailableVariation(data);
+
+    if (!availableVariation) {
+      show("Produto esgotado", "Infelizmente não temos mais esse produto disponível :(")
+      return;
+    }
+
+    showCheckoutScreen([{
+      ...data,
+      selectedVariation: {
+        ...data.variations[0],
+        quantity: 1
+      }
+    }]as CartProduct[])
+
+  }
+
+  const handleAddToCart = () => {
+    const availableVariation = getFirstAvailableVariation(data);
+
+    if (!availableVariation) {
+      show("Produto esgotado", "Infelizmente não temos mais esse produto disponível :(")
+      return;
+    }
+
+
+    addProduct({
+      ...data,
+      selectedVariation: {
+        ...availableVariation,
+        quantity: 1
+      }
+    } as CartProduct)
+  }
+
+  const handleFavoriteClick = async () => {
 
     if(!isLoggedIn){
       return router.push('/sign-in');
@@ -60,7 +103,7 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
     setLoading(true);
 
     const action = !data.favorite ? setFavoriteProduct : unsetFavoriteProduct;
-    const result = await action(productId);
+    const result = await action(data.id);
 
     
     setLoading(false);
@@ -69,7 +112,8 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
 
     toggleFavorite(data,  !data.favorite)
 
-  } 
+  }
+  
 
   return(
     <div
@@ -115,26 +159,14 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
         {/* <span className="text-xs font-medium text-green-500 py-0.5">R$ 3800 no PIX</span> */}
         <div className="flex gap-1">
           <button
-            className="bg-darker px-3 py-[3px] text-white rounded-xl"
-            onClick={()=> showCheckoutScreen([{
-              ...data,
-              selectedVariation: {
-                ...data.variations[0],
-                quantity: 1
-              }
-            }]as CartProduct[])}
+            className="bg-darker px-3 py-[3px] text-white rounded-xl max-[400px]:text-sm max-[400px]:rounded-lg max-[400px]:px-2 max-[400px]:py-[2px]"
+            onClick={handleBuy}
           >
             Comprar
           </button>
           <button
-            className="bg-transparent flex items-center justify-center w-[32px] h-[32px] border rounded-xl border-gray-300"
-            onClick={() => addProduct({
-              ...data,
-              selectedVariation: {
-                ...data.variations[0],
-                quantity: 1
-              }
-            } as CartProduct)}
+            className="bg-transparent flex items-center justify-center w-[32px] h-[32px] border rounded-xl border-gray-300 max-[400px]:rounded-lg max-[400px]:w-[28px] max-[400px]:h-[28px]"
+            onClick={handleAddToCart}
           >
             <Image
               src="/icons/add-to-cart-icon.svg"
@@ -144,8 +176,8 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
             />
           </button>
           <button
-            className="bg-transparent w-[32px] h-[32px] flex justify-center items-center border rounded-xl border-gray-300"
-            onClick={() => handleFavoriteClick(data.id)}
+            className=" w-[32px] h-[32px] flex justify-center items-center border rounded-xl border-gray-300 max-[400px]:rounded-lg max-[400px]:w-[28px] max-[400px]:h-[28px]"
+            onClick={handleFavoriteClick}
           >
             {loading
               ?<ArcSpinner className="text-darker-text" size={17} />

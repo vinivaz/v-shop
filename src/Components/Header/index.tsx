@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
 import { UserPopOver } from "./UserPopOver";
 import { isDev } from "@/utils/devEmails";
+import { CartItemIndicatior } from "./CartItemIndicator";
 
 export async function Header() {
 
@@ -78,19 +79,26 @@ export async function Header() {
           </Link>
           <Link
             href='/cart'
-            className="mx-2 flex items-center max-md:flex-col"
+            className="mx-2 flex items-center max-md:flex-col relative"
           >
-            <Image 
-              src="/icons/bag-icon.svg" 
-              alt="magnifying glass icon"
-              width={20}
-              height={20}
-            />
+            
+            <div
+             className="relative"
+            >
+              
+              <Image 
+                src="/icons/bag-icon.svg" 
+                alt="magnifying glass icon"
+                width={20}
+                height={20}
+              />
+            </div>
             <span
               className="ml-1 text-sm text-darker"
             >
               Cart
             </span>
+            <CartItemIndicatior/>
           </Link>
 
           <UserPopOver session={session} isDev={showDevZoneLink}/>

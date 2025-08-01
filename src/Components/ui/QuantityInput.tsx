@@ -27,6 +27,10 @@ export function QuantityInput(props:InputProps){
       setQuantity(value)
   },[value])
 
+  if(stock < 1){
+    return <p>Esgotado</p>
+  }
+
   return(
     <div
       className="flex flex-col justify-between items-center">

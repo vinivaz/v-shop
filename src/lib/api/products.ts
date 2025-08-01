@@ -1,5 +1,7 @@
 // import { headers } from "next/headers";
 
+import { CartProduct } from "@/types/cart";
+
 type ReadyData = {
   name: string;
   category: string;
@@ -48,6 +50,21 @@ export async function getProducts() {
   if (!res.ok) {
     throw new Error("Erro ao buscar produtos");
   }
+
+  return res.json();
+}
+
+export async function getProductsToSyncInCart(productsFromCart: CartProduct[]) {
+
+  const res = await fetch("/api/products/cart", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      products: productsFromCart.map(p => ({
+        productId: p.id,
+      }))
+    })
+  });
 
   return res.json();
 }

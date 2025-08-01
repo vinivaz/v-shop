@@ -8,7 +8,7 @@ import { getFavoriteProductsForUser } from "@/lib/api/server/products";
 import { getFavoritesServerSide } from "@/lib/api/server/products";
 
 // Components
-import WishListClient from "@/Components/WishlListClient";
+import WishListClient from "@/app/wishlist/Components/WishListClient";
 
 export default async function WishList({
   searchParams

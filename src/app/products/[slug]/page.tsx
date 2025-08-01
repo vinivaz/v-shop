@@ -6,7 +6,7 @@ import { getProductBySlugServerSide } from "@/lib/api/server/products";
 import Image from "next/image";
 import Link from "next/link";
 import { RatingStars } from "@/Components/RatingStars";
-import { ProductButtons } from "@/Components/ProductButtons";
+import { ProductButtons } from "@/app/products/[slug]/Components/ProductButtons";
 
 
   import type { Product, Variation } from "@/types/product";
@@ -49,8 +49,8 @@ import { ProductButtons } from "@/Components/ProductButtons";
       return 0;
     }
 
-  const variationIndex = getValidVariationIndex(variation, product.variations)
-  const imageIndex = getValidImageIndex(image, product.variations[variationIndex].images);
+    const variationIndex = getValidVariationIndex(variation, product.variations)
+    const imageIndex = getValidImageIndex(image, product.variations[variationIndex].images);
 
     if (!product) {
       return <div>Produto sem variações disponíveis no momento.</div>;
@@ -156,36 +156,51 @@ import { ProductButtons } from "@/Components/ProductButtons";
                 {product.variations.map((variation, index) => {
                   const isActive = index === variationIndex;
                   const variationSearchParams = new URLSearchParams(searchParams.toString());
+                  const isAvailable = variation.stock > 0;
                   variationSearchParams.set("variation", index.toString());
                   variationSearchParams.set("image", "0");
 
                   return(
+
+                    
                     <Link
                       key={index}
                       aria-label="select variation"
                       href={`${slug}?variation=${index}&image=0`}
                       scroll={false}
-                      className="flex flex-col max-w-[80px] items-center"
+                      className={`flex flex-col max-w-[80px] items-center justify-center relative`}
                     >
-                      <span
-                        className='line-clamp-2 leading-4 text-center'
-                      >
-                        {variation.name}
-                      </span>
+                      {isAvailable? "": (
+                        <span
+                         className="text-xs font-medium absolute bottom-5 left-[5%] z-20 text-lighter-text rotate-45"
+                        >
+                          Esgotado
+                        </span>
+                      )}
                       <div
-                        className={`flex w-[53px] h-[53px] rounded-xl overflow-hidden border ${
-                          isActive ? "border-darker" : "border-[#DDDDDD]"
-                        }`}
+                        className={isAvailable? "": "opacity-40"}
                       >
-                        <Image
-                          className="object-contain w-full max-w-[70px]"
-                          src={variation.images[0] as string}
-                          width={53}
-                          height={53}
-                          alt={variation.name}
-                          quality={50}
-                        />
+                        <span
+                          className='line-clamp-2 leading-4 text-center text-sm'
+                        >
+                          {variation.name}
+                        </span>
+                        <div
+                          className={`flex w-[53px] h-[53px] rounded-xl overflow-hidden border ${
+                            isActive ? "border-darker" : "border-[#DDDDDD]"
+                          }`}
+                        >
+                          <Image
+                            className={`object-contain w-full max-w-[70px] `}
+                            src={variation.images[0] as string}
+                            width={53}
+                            height={53}
+                            alt={variation.name}
+                            quality={50}
+                          />
+                        </div>
                       </div>
+
                     </Link>
                   )
                 }

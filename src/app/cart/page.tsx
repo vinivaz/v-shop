@@ -12,14 +12,16 @@ import Modal from "../../Components/Modal";
 
 // Hooks
 import { useCartStore } from "../../../store/cartStore";
-import { useState, useEffect } from "react";
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useRef } from "react";
 import { useWarningMessageStore } from "../../../store/warningMessageStore";
 import { useCheckoutStore } from "../../../store/checkoutStore";
 
+
+
 // Types
 import type { CartProduct } from "@/types/cart";
+import { VariationSelector } from "./Components/VariationsSelector";
+import { getProductsToSyncInCart } from "@/lib/api/products";
 
 type changingProductVariationProp = {
   prevProductId: string;
@@ -28,15 +30,37 @@ type changingProductVariationProp = {
 }
 
 export default function Cart(){
-  const { products, changeProductVariation, updateProduct, removeProduct, clearCart } = useCartStore();
+  const { products, changeProductVariation, updateProduct, removeProduct, syncCartWithServer, clearCart } = useCartStore();
   const [ isActive, setIsActive ] = useState<boolean>(false);
   const [ showing, setShowing ] = useState(false);
-  const [ selectingProductVariation, setSelectingProductVariation ] = useState<changingProductVariationProp|null>(null);
+  const [ variationSelectorState, setVariationSelectorState ] = useState<changingProductVariationProp|null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const { showCheckoutScreen, hideCheckoutScreen } = useCheckoutStore()
 
-  const showWarningMessage  = useWarningMessageStore(state => state.show) 
+  const showWarningMessage  = useWarningMessageStore(state => state.show)
+
+const hasSyncedRef = useRef(false);
+
+  useEffect(() => {
+    if (hasSyncedRef.current) return; // já sincronizou
+    if (products.length === 0) return; // ainda não carregou
+
+    const syncProductsWithServer = async () => {
+      try {
+        const updatedProducts = await getProductsToSyncInCart(products);
+        if(updatedProducts.error)return;
+        
+        syncCartWithServer(updatedProducts);
+        hasSyncedRef.current = true; // marca como sincronizado
+      } catch (err) {
+        console.error("Erro ao sincronizar produtos do carrinho:", err);
+      }
+    };
+
+    syncProductsWithServer();
+  }, [products]);
+
 
   const handleBuy = async () => {
     const selectedProducts = products.filter(product =>
@@ -104,8 +128,10 @@ export default function Cart(){
                   <Input
                     type="checkbox"
                     containerClass="w-auto"
-                    checked={selectedItems.includes(product.id + product.selectedVariation.id)}
+                    disabled={product.selectedVariation.stock<1}
+                    checked={product.selectedVariation.stock> 0 ? selectedItems.includes(product.id + product.selectedVariation.id): false}
                     onChange={(e) => {
+                      if(product.selectedVariation.stock<1) return;
                       const key = product.id + product.selectedVariation.id;
                       setSelectedItems(prev =>
                         e.target.checked
@@ -145,7 +171,7 @@ export default function Cart(){
                         onClick={() => {
                           setShowing(true)
                           console.log(product)
-                          setSelectingProductVariation({
+                          setVariationSelectorState({
                             prevProductId:product.id,
                             prevVariationId: product.selectedVariation.id,
                             product
@@ -327,117 +353,12 @@ export default function Cart(){
           </div>
         </div>
       </div>
-      {selectingProductVariation && (
+      {variationSelectorState && (
       <Modal
         showing={showing}
         setShowing={setShowing}
       >
-        <div
-          className="w-full"
-        >
-          <h2
-            className="font-bold text-lg"
-          >
-            Escolha a variação
-          </h2>
-          
-          <div
-            className="flex flex-row w-full justify-between"
-          >
-            <div
-              className="flex py-2 gap-1 items-center w-full"
-            >
-              <div
-                className="w-[60px] h-[60px] rounded-2xl"
-              >
-                <Image
-                  className="object-contain w-full h-full"
-                  src={selectingProductVariation?.product.selectedVariation?.images[0]|| ""}
-                  width={45}
-                  height={45}
-                  alt="variation picture"
-                />
-              </div>
-              <div>
-                <h2
-                  className="text-base font-medium leading-4 line-clamp-2 max-sm:text-sm"
-                >
-                  {selectingProductVariation.product.selectedVariation.name}
-                </h2>
-                <p
-                  className="text-base font-semibold"
-                >
-                  R$ {selectingProductVariation?.product.selectedVariation?.price}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-between items-center  max-w-[100px] max-[860px]:h-auto">
-              <span
-                className="text-sm font-medium max-[860px]:showing"
-              >
-                Quantidade
-              </span>
-              <QuantityInput
-                onValueChange={(value) => setSelectingProductVariation({
-                  ...selectingProductVariation,
-                  product: {
-
-                    ...selectingProductVariation.product,
-                    selectedVariation: {
-                      ...selectingProductVariation.product.selectedVariation,
-                      quantity: value
-                    }
-                  }
-      
-                })}
-                value={selectingProductVariation.product.selectedVariation.quantity}
-                stock={selectingProductVariation.product.selectedVariation.stock}
-              />
-            </div>
-          </div>
-          <div
-            className="inline-flex flex-row flex-wrap w-full  gap-1 my-4 border-1 border-[#ddd] p-2 rounded-xl"
-          >
-            {selectingProductVariation.product?.variations?.map((singleVariation) => (
-              <div
-                key={singleVariation.id}
-                className={`flex w-[50px] h-[50px] rounded-xl overflow-hidden
-                  ${selectingProductVariation.product.selectedVariation.id === singleVariation.id? "border-3 border-fading-text": ""
-                }`}
-                onClick={() => setSelectingProductVariation(({
-                  ...selectingProductVariation,
-                  product: {
-                    ...selectingProductVariation.product,
-                    selectedVariation:{
-                      ...singleVariation,
-                      quantity: 1
-                    }
-                  }
-                }))}
-              >
-                <Image
-                  className="object-contain w-full h-full"
-                  src={singleVariation.images[0]|| ""}
-                  width={45}
-                  height={45}
-                  alt="variation picture"
-                />
-              </div>
-            ))}
-
-          </div>
-
-          <Button
-            onClick={() => {
-              // console.log((selectingProductVariation))
-              changeProductVariation(selectingProductVariation)
-              setSelectingProductVariation(null)
-            }}
-          >
-            Concluir
-          </Button>
-        </div>
+        <VariationSelector data={variationSelectorState}  setData={setVariationSelectorState} selectVariation={changeProductVariation}/>
       </Modal> )}
     </div>
   )

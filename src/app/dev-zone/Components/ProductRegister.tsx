@@ -2,12 +2,12 @@
 
 // Components
 import Image from "next/image";
-import { Input } from "../ui/Input";
-import { SelectOptions } from "../ui/SelectOptions";
-import { TextArea } from "../ui/TextArea";
-import { ImagesSelector } from "../ui/ImagesSelector";
+import { Input } from "../../../Components/ui/Input";
+import { SelectOptions } from "../../../Components/ui/SelectOptions";
+import { TextArea } from "../../../Components/ui/TextArea";
+import { ImagesSelector } from "../../../Components/ui/ImagesSelector";
 import { registerProduct } from "@/lib/api/products";
-import { Button } from "../ui/Button";
+import { Button } from "../../../Components/ui/Button";
 import { Controller } from "react-hook-form";
 
 // Hooks

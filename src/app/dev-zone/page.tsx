@@ -6,7 +6,7 @@ import { isDev } from "@/utils/devEmails";
 import { redirect } from "next/navigation";
 
 // Components
-import { ProductRegister } from "@/Components/ProductRegister";
+import { ProductRegister } from "@/app/dev-zone/Components/ProductRegister";
 
 export default async function DevZone(){
 
