@@ -27,6 +27,7 @@ export default async function Home() {
   const products : ProductType[] = await getProducts()
 
   const session = await getServerSession(authOptions);
+  console.log(session)
   const user = session?.user
     ? await prisma.user.findUnique({ where: { email: session.user.email! } })
     : null;

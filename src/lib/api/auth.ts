@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"; // ou como você configura o Prisma
+import { prisma } from "@/lib/prisma";
 import { compare } from "bcryptjs";
 
 //types
@@ -9,11 +9,11 @@ type SignUpFormData = {
 }
 
 type UserProps = {
-    id: string;
-    name: string;
-    email: string;
-    image?: string;
-  }
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+}
 
 const rootURL = process.env.NEXT_PUBLIC_URL;
 
@@ -84,19 +84,7 @@ export async function sendEmailMessageWithToken(data:{email: string}) {
   return await res.json();
 }
 
-export async function verifyToken(data:{email: string, token: string}) {
-  const res = await fetch(`${rootURL}/api/auth/verify-token`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  return res;
-}
-
-export async function resetPassword(data:{email: string, password: string}) {
+export async function resetPassword(data:{token: string, email: string, newPassword: string}) {
   const res = await fetch(`${rootURL}/api/auth/reset-password`, {
     method: 'POST',
     body: JSON.stringify(data),

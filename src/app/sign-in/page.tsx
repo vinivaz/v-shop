@@ -39,8 +39,7 @@ export default function SignIn(){
         password: data.password,
         redirect: false,
       });
-
-      console.log(res)
+      
       
       if (res?.ok) {
         window.location.href = "/";

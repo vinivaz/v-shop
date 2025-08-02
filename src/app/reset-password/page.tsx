@@ -12,15 +12,9 @@ import { useState } from "react";
 import { useWarningMessageStore } from "../../../store/warningMessageStore";
 
 import { signIn } from "next-auth/react";
-import { emailFormSchema, tokenFormSchema, resetPasswordFormSchema, EmailFormData, TokenFormData, ResetPasswordFormData } from "@/validators/reset-password-form-validator";
+import { emailFormSchema, resetPasswordFormSchema, EmailFormData, ResetPasswordFormData } from "@/validators/reset-password-form-validator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sendEmailMessageWithToken, verifyToken, resetPassword } from "@/lib/api/auth";
-
-type EmailSent = {
-  status: boolean;
-  email: string | null;
-}
-
+import { sendEmailMessageWithToken, resetPassword } from "@/lib/api/auth";
 
 export default function ResetPassword(){
 
@@ -28,12 +22,9 @@ export default function ResetPassword(){
     email: '',
   }
 
-  const tokenInitialFormValue = {
-    token: '',
-  }
-
   const resetPasswordInitialFormValue = {
-    password: '',
+    token: '',
+    newPassword: '',
     confirmPassword: ''
   }
 
@@ -52,19 +43,6 @@ export default function ResetPassword(){
   })
 
   const { 
-    register: tokenRegister,
-    handleSubmit: handleTokenSubmit,
-    reset: tokenFormReset,
-    formState: {
-      errors: tokenErrors,
-      isSubmitting: isTokenSubmitting
-    } 
-  } = useForm<TokenFormData>({
-    defaultValues: tokenInitialFormValue,
-    resolver: zodResolver(tokenFormSchema)
-  })
-
-  const { 
     register: resetPasswordRegister,
     handleSubmit: handleResetPasswordSubmit,
     reset: resetPasswordFormReset,
@@ -77,14 +55,13 @@ export default function ResetPassword(){
     resolver: zodResolver(resetPasswordFormSchema)
   })
 
-  const [ changingPassword, setChangingPassword ] = useState(false)
-
   const show = useWarningMessageStore((state) => state.show)
 
   const email = watchEmail("email")
 
   const onEmailSubmit = async(data: EmailFormData) => {
-    console.log(data)
+    if(isEmailSubmitting)return;
+
     try{
 
       const res = await sendEmailMessageWithToken(data);
@@ -106,36 +83,10 @@ export default function ResetPassword(){
     }
   }
 
-  const onTokenSubmit = async(data: TokenFormData) => {
-    console.log(data)
 
-    if(!email){
-      show("Houve um erro.", "Por favor insira o seu e-mail.");
-      return;
-    }
-
-    try{
-      const tokenSentAttempt = await verifyToken({email, token: data.token})
-
-      console.log(tokenSentAttempt)
-      if(tokenSentAttempt.ok){
-        setChangingPassword(true)
-        return;
-      }
-
-      const {error} = await tokenSentAttempt.json()
-      if(error){
-        show("Houve um erro.", error)
-      }
-    }catch(err){
-      console.log(err)
-      show("Houve um erro.","Erro ou tentar enviar o código, por favor tente novamente.")
-    }
-  }
 
   const onResetPasswordSubmit = async(data: ResetPasswordFormData) => {
-    console.log(data)
-    
+    if(isResetPasswordSubmitting)return;
 
     if(!email){
       show("Houve um erro.", "Por favor insira o seu e-mail.");
@@ -143,7 +94,7 @@ export default function ResetPassword(){
     }
 
     try{
-      const resetPassowordAttepmt = await resetPassword({email, password: data.password})
+      const resetPassowordAttepmt = await resetPassword({token:data.token, email, newPassword: data.newPassword})
 
       console.log(resetPassowordAttepmt)
       if(resetPassowordAttepmt.error){
@@ -152,8 +103,9 @@ export default function ResetPassword(){
       }
 
       if(resetPassowordAttepmt.message){
+        emailFormReset(emailInitialFormValue)
         resetPasswordFormReset(resetPasswordInitialFormValue)
-        show("Sucesso!", resetPassowordAttepmt.message)
+        show("Deu certo!", resetPassowordAttepmt.message)
       }
 
     }catch(err){
@@ -165,7 +117,7 @@ export default function ResetPassword(){
 
   return(
     <div
-     className="flex flex-auto flex-col justify-center items-center min-md:h-[90vh] max-md:max-h-[800px] min-md:max-h-[692px] my-5 bg-white overflow-hidden rounded-3xl w-full max-w-[400px]"
+     className="flex flex-auto flex-col justify-center items-center min-md:h-[90vh] max-md:max-h-[800px] min-md:max-h-[692px] my-5 max-md:py-5 bg-white overflow-hidden rounded-3xl w-full max-w-[400px]"
     >
       {/* sign in illustration */}
       <Image
@@ -177,10 +129,10 @@ export default function ResetPassword(){
       />
       
       <div
-        className="flex flex-col items-center w-full z-1 mt-6 px-9 max-[400px]:px-4 pb-5"
+        className="flex flex-col items-center w-full z-1 mt-3 px-9 max-[400px]:px-4 pb-3"
       >
         <div
-         className="mb-5"
+         className="mb-2"
         >
           <h2
            className="w-full text-left text-lg text-primary-text font-bold"
@@ -217,17 +169,34 @@ export default function ResetPassword(){
 
         {!email || email.length > 0 &&(
           <div
-            className="w-full mt-9 pt-4 border-t-1 border-t-secondary-border"
+            className="w-full mt-3 pt-3 border-t-1 border-t-secondary-border"
           >
             <Input
               type="text"
               label="Insira o código"
               placeholder="Digite o código recebido de seu e-mail"
-              error={tokenErrors.token?.message || ""}
-              {...tokenRegister("token", {required: true})}
+              error={resetPasswordErrors.token?.message || ""}
+              {...resetPasswordRegister("token", {required: true})}
             />
+
+            <Input
+              type="password"
+              label="Nova senha"
+              placeholder="Digite a nova senha"
+              error={resetPasswordErrors.newPassword?.message || ""}
+              {...resetPasswordRegister("newPassword", {required: true, minLength: 6})}
+            />
+
+            <Input
+              type="password"
+              label="Confirme a senha"
+              placeholder="Digite a nova senha novamente"
+              error={resetPasswordErrors.confirmPassword?.message || ""}
+              {...resetPasswordRegister("confirmPassword", {required: true, minLength: 6})}
+            />
+
             <Button
-              onClick={() => handleTokenSubmit(onTokenSubmit)()}
+              onClick={() => handleResetPasswordSubmit(onResetPasswordSubmit)()}
             >
               Concluir
             </Button>
@@ -242,7 +211,7 @@ export default function ResetPassword(){
         </div>
       </div>
 
-      {changingPassword && (
+      {/* {changingPassword && (
         <Modal
           showing={changingPassword}
           setShowing={setChangingPassword}
@@ -303,7 +272,7 @@ export default function ResetPassword(){
             </div>
           </div>
         </Modal>
-      )}
+      )} */}
 
     </div>
   )

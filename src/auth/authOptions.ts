@@ -4,11 +4,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { findUserOrCreate, loginUserWithEmail } from "@/lib/api/auth";
 
 type UserProps = {
-    id: string;
-    name: string;
-    email: string;
-    image?: string;
-  }
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+}
 
 
 export const authOptions: NextAuthOptions = {
@@ -44,26 +44,26 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 7 * 24 * 60 * 60,
   },
-callbacks: {
-  async signIn({user, account}) {
-    if (account?.provider === 'google') {
-      await findUserOrCreate(user as UserProps)
-    }
+  callbacks: {
+    async signIn({user, account}) {
+      if (account?.provider === 'google') {
+        await findUserOrCreate(user as UserProps)
+      }
 
-    return true;
-  },
+      return true;
+    },
 
-  async jwt({ token, user }) {
-    if (user) {
-      token.id = user.id; 
-    }
-    return token;
-  },
-  async session({ session, token }) {
-    session.user.id = token.id as string;
-    return session;
-  },
-}
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id; 
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user!.id = token.id as string;
+      return session;
+    },
+  }
 };
