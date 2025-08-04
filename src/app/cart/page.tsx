@@ -48,10 +48,15 @@ const hasSyncedRef = useRef(false);
 
     const syncProductsWithServer = async () => {
       try {
-        const updatedProducts = await getProductsToSyncInCart(products);
-        if(updatedProducts.error)return;
+        const {data: updatedProducts, error} = await getProductsToSyncInCart(products);
         
-        syncCartWithServer(updatedProducts);
+        if(error){
+          console.log(error);
+          return;
+        }
+        
+        syncCartWithServer(updatedProducts!);
+
         hasSyncedRef.current = true; // marca como sincronizado
       } catch (err) {
         console.error("Erro ao sincronizar produtos do carrinho:", err);

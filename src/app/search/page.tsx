@@ -10,6 +10,16 @@ import { prisma } from "@/lib/prisma";
 
 import type { Product as DatabaseProduct } from "@/types/product";
 
+
+
+async function getServerSearchResult(query?: string) {
+  if (!query) return null;
+
+  const { data, error } = await searchProducts(query);
+  if (error) throw new Error("Erro ao buscar produtos.");
+  return data!;
+}
+
 export default async function Search({
   searchParams
 }: {
@@ -20,19 +30,13 @@ export default async function Search({
 
   const query = resolvedSearchParams.q;
 
-  let serverSearchResult: DatabaseProduct[] | null = null;
-
-  if(query){
-    serverSearchResult = await searchProducts(query);
-  }
+  let serverSearchResult : DatabaseProduct[] | null = await getServerSearchResult(query);
 
   const session = await getServerSession(authOptions);
 
   const user = session?.user
-    ? await prisma.user.findUnique({ where: { email: session.user.email! } })
+    ? await prisma.user.findUnique({ where: { email: session.user.email! }, omit: {password: true, passwordResetToken: true} })
     : null;
-
-  console.log(user);
 
   let favoriteProductIds: string[] = [];
 
@@ -49,7 +53,7 @@ export default async function Search({
     }
   }
 
-  console.log(serverSearchResult);
+
 
   return( 
     <div className=" flex flex-col justify-center items-center w-full h-full mt-7">

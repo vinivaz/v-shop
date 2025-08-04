@@ -1,7 +1,11 @@
 // import { headers } from "next/headers";
 
-import { CartProduct } from "@/types/cart";
 
+import { error } from "console";
+import { fetchWithHandler } from "@/lib/fetchWithHandler";
+
+import type { CartProduct } from "@/types/cart";
+import type { Product as ProductType } from "@/types/product";
 type ReadyData = {
   name: string;
   category: string;
@@ -16,61 +20,64 @@ type ReadyData = {
   }[]
 }
 
+type ProductRegister =  {
+  id: string;
+  name: string;
+  slug: string | null;
+  description: string;
+  category: string;
+  mainImage: string | null;
+  createdAt: Date;
+};
+
+type FavoriteType = {
+  id: string;
+  createdAt: Date;
+  productId: string;
+  userId: string;
+}
+
+
+
 const rootURL = process.env.NEXT_PUBLIC_URL;
 
+
 export async function searchProducts(term: string) {
-  const res = await fetch(`${rootURL}/api/products/search?q=${encodeURIComponent(term)}`);
-  if (!res.ok) throw new Error('Erro ao buscar produtos');
-  return res.json();
+  return await fetchWithHandler<ProductType[]>(
+    `${rootURL}/api/products/search?q=${encodeURIComponent(term)}`
+  );
 }
 
-export async function getProductBySlug(slug: string) {
 
-  const res = await fetch(`${rootURL}/api/products/${slug}`, {
+export async function getProducts(){
 
-    cache: "no-cache"
-  });
-
-  if (!res.ok) {
-    throw new Error("Erro ao buscar produtos");
-  }
-
-  return res.json();
-}
-
-export async function getProducts() {
-
-  console.log(rootURL)
-  const res = await fetch(`${rootURL}/api/products`, {
-    next: { revalidate: 60 },
-    cache: "force-cache",
-  });
-
-  console.log(res)
-  if (!res.ok) {
-    throw new Error("Erro ao buscar produtos");
-  }
-
-  return res.json();
+  return await fetchWithHandler<ProductType[]>(
+    `${rootURL}/api/products`,
+    {
+      cache: "force-cache",
+      next: { revalidate: 60 },
+    }
+  );
 }
 
 export async function getProductsToSyncInCart(productsFromCart: CartProduct[]) {
 
-  const res = await fetch("/api/products/cart", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      products: productsFromCart.map(p => ({
-        productId: p.id,
-      }))
-    })
-  });
-
-  return res.json();
+  return await fetchWithHandler<ProductType[]>(
+    "/api/products/cart",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        products: productsFromCart.map(p => ({
+          productId: p.id,
+        }))
+      })
+    }
+  );
 }
 
 export async function registerProduct(data: ReadyData) {
-  return await fetch(`${rootURL}/api/products`, {
+  return await fetchWithHandler<ProductRegister>(`${rootURL}/api/products`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
@@ -80,50 +87,31 @@ export async function registerProduct(data: ReadyData) {
 }
 
 
-export async function getFavoriteProducts() {
-  const res = await fetch(`${rootURL}/api/products/favorites`);
-  return res.json();
-};
-
 export async function getFavoritesClientSide(term?: string) {
   const query = term ? `?q=${encodeURIComponent(term)}` : '';
 
-  const res = await fetch(`/api/products/favorites${query}`, {
+  return await fetchWithHandler<ProductType[]>(`/api/products/favorites${query}`, {
     cache: "no-store",
   });
-
-  if (!res.ok) throw new Error("Erro ao buscar favoritos");
-  return res.json();
 }
-
-// export async function getFavoriteProducts() {
-//   const headersList = await headers();
-//   const cookie = headersList.get("cookie");
-  
-//   const res = await fetch(`${rootURL}/api/products/favorites`);
-//   return res.json();
-// };
 
 
 export async function setFavoriteProduct(productId: string) {
-  const res = await fetch(`${rootURL}/api/products/favorites`, {
+  return await fetchWithHandler<FavoriteType>(`${rootURL}/api/products/favorites`, {
     method: 'POST',
     body: JSON.stringify({productId}),
     headers: {
       'Content-Type': 'application/json',
     },
   });
-  return res.json();
 };
 
 export async function unsetFavoriteProduct(productId: string) {
-  const res = await fetch(`${rootURL}/api/products/favorites`, {
+ return await fetchWithHandler<undefined>(`${rootURL}/api/products/favorites`, {
     method: 'DELETE',
     body: JSON.stringify({productId}),
     headers: {
       'Content-Type': 'application/json',
     },
   });
-
-  return res.json();
 };

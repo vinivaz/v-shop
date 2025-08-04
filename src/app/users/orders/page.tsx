@@ -3,11 +3,12 @@
 import { getOrders } from "@/lib/api/server/orders";
 import Image from "next/image";
 
-import type { OrderType } from "@/types/order";
 
 export default async function Orders () {
-  const orders: OrderType[] = await getOrders()
-  console.log(orders)
+  const {data: orders, error }= await getOrders()
+
+  
+  if (error) throw new Error(error ||"Erro ao buscar pedidos.");
 
   const dateConverter = (date:Date) => {
 
@@ -19,17 +20,15 @@ export default async function Orders () {
     const isCurrentYear = createdAt.getFullYear() === today.getFullYear();
 
     return createdAt.toLocaleString("pt-BR", {
-
-    ...(isCurrentYear ? {} : { year: "numeric" }),
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    // timeZone: "America/New_York",  
-    // hour12: true
-  })
-
-    }
+      ...(isCurrentYear ? {} : { year: "numeric" }),
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      // timeZone: "America/New_York",  
+      // hour12: true
+    })
+  }
 
   return (
   <div
@@ -42,7 +41,7 @@ export default async function Orders () {
     </h1>
 
     <div className="w-full flex flex-col justify-center">
-      {orders.map((order) => (
+      {orders!.map((order) => (
         <div
           key={order.id}
           className="p-3 my-1"

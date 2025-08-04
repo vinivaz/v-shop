@@ -26,9 +26,9 @@ export async function GET(request: Request) {
  
     const favorites = term ? await getFavoriteProductsBySearch(user.id, term) : await getFavoriteProductsForUser(user.id);
 
-    return NextResponse.json(favorites.map(f => ({...f.product, favorite: true})), { status: 200 });
+    return NextResponse.json({data:favorites.map(f => ({...f.product, favorite: true}))}, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: "Error"}, { status: 500 });
+    return NextResponse.json({ error: "Falha ao buscar favoritos"}, { status: 500 });
   }
 }
 
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(favorite, { status: 201 });
+    return NextResponse.json({data:favorite}, { status: 201 });
   } catch (error) {
     console.log(error)
     return NextResponse.json({ error: "Already favorited or error" }, { status: 500 });

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; // ajuste esse path conforme seu projeto
+import { error } from 'console';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -9,22 +10,30 @@ export async function GET(request: Request) {
     return NextResponse.json([], { status: 200 });
   }
 
-  const products = await prisma.product.findMany({
-    where: {
-      OR: [
-        {
-          name: { contains: term, mode: 'insensitive' },
-        },
-        {
-          category: { contains: term, mode: 'insensitive' },
-        },
-      ],
-    },
-    include: {
-      variations: true,
-    },
-    take: 10,
-  });
+  try{
 
-  return NextResponse.json(products);
+    const products = await prisma.product.findMany({
+      where: {
+        OR: [
+          {
+            name: { contains: term, mode: 'insensitive' },
+          },
+          {
+            category: { contains: term, mode: 'insensitive' },
+          },
+        ],
+      },
+      include: {
+        variations: true,
+      },
+      take: 10,
+    });
+
+    return NextResponse.json({data: products});
+
+  }catch(err){
+    console.log(err);
+    return NextResponse.json({error: "Houve um erro ao tentar a busca."}, {status: 401});
+  }
+
 }

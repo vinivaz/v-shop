@@ -3,7 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
 import { prisma } from "@/lib/prisma";
-import { getFavoriteProducts } from "@/lib/api/products";
+// import { getFavoriteProducts } from "@/lib/api/products";
 import { getFavoriteProductsForUser } from "@/lib/api/server/products";
 import { getFavoritesServerSide } from "@/lib/api/server/products";
 
@@ -20,12 +20,12 @@ export default async function WishList({
 
   const query = resolvedSearchParams.q;
 
-  const favs = await getFavoritesServerSide(query || undefined)
-  console.log(favs)
+  const {data: favs, error }= await getFavoritesServerSide(query || undefined);
+  if(error) throw new Error("Erro ou buscar favoritos, tente novamente.")
 
   return(
     <div className=" flex flex-col justify-center items-center w-full h-full mt-7">
-      <WishListClient serverSearchResult={favs} initialQuery={query ?? ''}/>
+      <WishListClient serverSearchResult={favs!} initialQuery={query ?? ''}/>
     </div>
   )
 }

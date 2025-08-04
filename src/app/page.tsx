@@ -2,7 +2,7 @@
 
 // Components
 import Image from "next/image";
-import { getProducts, getFavoriteProducts } from "@/lib/api/products";
+import { getProducts } from "@/lib/api/products";
 import { Hero } from "@/Components/Hero";
 import Link from "next/link";
 
@@ -24,10 +24,11 @@ type FirstPageProps = {
 }
 
 export default async function Home() {
-  const products : ProductType[] = await getProducts()
+
+  const {data:products, error} = await getProducts();
+  if (error) throw new Error(error ||"Erro ao buscar produtos.");
 
   const session = await getServerSession(authOptions);
-  console.log(session)
   const user = session?.user
     ? await prisma.user.findUnique({ where: { email: session.user.email! } })
     : null;
@@ -39,7 +40,7 @@ export default async function Home() {
     favoriteProductIds = favorites.map((fav) => fav.productId);
   }
 
-  const enrichedProducts = products.map((product) => ({
+  const enrichedProducts = products!.map((product) => ({
     ...product,
     favorite: favoriteProductIds.includes(product.id),
   }));

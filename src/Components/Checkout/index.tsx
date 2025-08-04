@@ -37,17 +37,24 @@ export const Checkout = () => {
       price: singleProduct.selectedVariation.price,
     }));
 
-    
-    const newOrder = await registerOrder({ items });
+    try{
 
-    if(newOrder.error){
-      showWarningMessage(newOrder.error, "Algo deu errado, tente novamente:(");
-      return;
+      const {error} = await registerOrder({ items });
+
+      if(error){
+        showWarningMessage("Algo deu errado", error);
+        return;
+      }
+
+      hideCheckoutScreen()
+      removeManyProducts(items)
+      showWarningMessage("Seu pedido foi concluído.", "Agora a avaliação desses produtos será liberada, veja os detalhes em minhas compras.");
+
+    }catch(err){
+      console.log(err)
+      showWarningMessage("Falha ao tentar fazer o pedido", "Houve um erro inesperado, por favor tente novamente.");
     }
 
-    hideCheckoutScreen()
-    removeManyProducts(items)
-    showWarningMessage("Seu pedido foi concluído.", "Agora a avaliação desses produtos será liberada, veja os detalhes em minhas compras.");
   }
 
   if (!visible) return null;

@@ -41,11 +41,11 @@ export async function GET(request: Request) {
     //   headphones
     // });
 
-    return NextResponse.json(products);
+    return NextResponse.json({data: products});
 
   } catch (error) {
     console.error('Erro ao buscar produtos:', error);
-    return new NextResponse('Erro ao buscar produtos', { status: 500 });
+    return  NextResponse.json({error: "Erro ao procurar produtos"}, { status: 500 });
   }
 }
 
@@ -91,10 +91,10 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json({data:product}, {status: 200});
   } catch (error) {
     console.error('Erro ao criar produto:', error);
-    return new NextResponse('Erro ao criar produto', { status: 500 });
+    return NextResponse.json({error:'Erro ao criar produto'}, { status: 500 });
   }
 }
 

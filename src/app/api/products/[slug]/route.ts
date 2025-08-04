@@ -48,7 +48,7 @@ export async function GET(
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json({...product, favorite}, { status: 200 });
+    return NextResponse.json({data:{...product, favorite}}, { status: 200 });
 
   }catch(error){
     console.log(error)

@@ -22,7 +22,9 @@ import { ProductButtons } from "@/app/products/[slug]/Components/ProductButtons"
     const { slug } = await params;
     const { variation, image } = await searchParams;
 
-    const product: Product = await getProductBySlugServerSide(slug);
+    const {data: product, error} = await getProductBySlugServerSide(slug);
+    
+    if(error)throw new Error(error);
 
     function getValidVariationIndex(
       value: string | null |undefined,
@@ -49,8 +51,8 @@ import { ProductButtons } from "@/app/products/[slug]/Components/ProductButtons"
       return 0;
     }
 
-    const variationIndex = getValidVariationIndex(variation, product.variations)
-    const imageIndex = getValidImageIndex(image, product.variations[variationIndex].images);
+    const variationIndex = getValidVariationIndex(variation, product!.variations)
+    const imageIndex = getValidImageIndex(image, product!.variations[variationIndex].images);
 
     if (!product) {
       return <div>Produto sem variações disponíveis no momento.</div>;

@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(products);
+    return NextResponse.json({data: products});
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erro ao buscar produtos" }, { status: 500 });

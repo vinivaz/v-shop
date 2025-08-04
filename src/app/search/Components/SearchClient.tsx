@@ -14,6 +14,7 @@ import { searchProducts } from "@/lib/api/products";
 
 // Types
 import type { Product as ProductType } from "@/types/product";
+import { error } from "console";
 
 
 const SearchClient = (props: {
@@ -24,7 +25,6 @@ const SearchClient = (props: {
 }) => {
   
   const {initialQuery, serverSearchResult, favoriteProductIds} = props;
-  console.log(serverSearchResult)
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -55,7 +55,6 @@ const SearchClient = (props: {
     setLoading(true)
 
     const newParams = new URLSearchParams(searchParams.toString());
-    console.log(initialQuery);
 
     if (search) newParams.set('q', search);
 
@@ -64,20 +63,21 @@ const SearchClient = (props: {
     router.push(`/search?${newParams.toString()}`);
         
     const searchProductsByText = async () => {
-      try{
-        
-        const result = await searchProducts(debouncedSearch)
+ 
+      const {data: result, error} = await searchProducts(debouncedSearch)
 
-        setLoading(false)
-        setSearchResult(result.map((product:ProductType) => ({
-          ...product,
-          favorite: favoriteProductIds.includes(product.id),
-        })))
+      setLoading(false)
 
-      }catch(error) {
-        setLoading(false)
+      if(error){
         console.log(error)
+        return;
       }
+
+ 
+      setSearchResult(result!.map((product:ProductType) => ({
+        ...product,
+        favorite: favoriteProductIds.includes(product.id),
+      })))
     };
 
     searchProductsByText();

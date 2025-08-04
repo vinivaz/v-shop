@@ -104,7 +104,7 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
 
     const action = !data.favorite ? setFavoriteProduct : unsetFavoriteProduct;
     const result = await action(data.id);
-
+    console.log(result)
     
     setLoading(false);
 

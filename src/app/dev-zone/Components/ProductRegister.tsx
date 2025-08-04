@@ -12,6 +12,7 @@ import { Controller } from "react-hook-form";
 
 // Hooks
 import { useForm, useFieldArray } from "react-hook-form";
+import { useWarningMessageStore } from "../../../../store/warningMessageStore";
 
 // Firebase Actions
 import { uploadFile, uploadMultipleImages } from "@/services/firebase/storageService";
@@ -80,6 +81,8 @@ export function ProductRegister(){
     name: "variations"
   })
 
+  const { show:showWarningMessage } = useWarningMessageStore()
+
   const onSubmit = async(data: FormData) => {
     console.log(data)
     try{
@@ -118,12 +121,22 @@ export function ProductRegister(){
       //   },
       // });
 
-      const res = await registerProduct({
+      const {data: registeredProduct, error} = await registerProduct({
         ...data,
         mainImage: variations[0].images[0],
         variations
       })
-      console.log(res)
+
+      if(error){
+        showWarningMessage("Vish, houve um erro", error);
+        console.log(error);
+        return;
+      }
+      
+
+      showWarningMessage("Deu certo.", "Produto registrado com sucesso!");
+      console.log(registeredProduct);
+
       
       reset(initialFormValues);
 

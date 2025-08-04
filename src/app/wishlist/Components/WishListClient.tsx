@@ -31,10 +31,7 @@ const WishListClient = ({
   const [ debouncedSearch, setDebouncedSearch ] = useState<string>('');
   const [ loading, setLoading ] = useState(false);
 
-  const handleClick = async() => {
-    const favs = await getFavoritesClientSide("switch")
-    console.log(favs)
-  }
+
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -53,10 +50,12 @@ const WishListClient = ({
       const searchProductsByText = async (text?:string) => {
         try{
           
-          const result = await getFavoritesClientSide( text || undefined)
-  
+          const {data:result, error} = await getFavoritesClientSide( text || undefined);
           setLoading(false)
-          setSearchResult(result.map((product:ProductType) => ({
+          if(error)throw new Error(error);
+  
+          
+          setSearchResult(result!.map((product:ProductType) => ({
             ...product,
           })))
   
@@ -73,7 +72,6 @@ const WishListClient = ({
       }
   
       const newParams = new URLSearchParams(searchParams.toString());
-      console.log(initialQuery);
   
       if (search) newParams.set('q', search);
   

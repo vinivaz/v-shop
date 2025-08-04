@@ -36,32 +36,30 @@ export default function SignUp(){
     console.log(data)
     try{
 
-      const res = await signUp({
+      const {data: user, error} = await signUp({
         name: data.name,
         email: data.email,
         password: data.password
       })
 
-      console.log(res)
 
-      if(res.error){
-        show("Erro ou entrar", res.error)
+      if(error){
+        show("Erro ou entrar", error)
         return;
-      }
-
-      if(res.user){
-        await signIn("credentials", {
-          email: data.email,
-          password: data.password,
-          redirect: true,
-          callbackUrl: "/",
-        });
       }
 
       reset(initialFormValues);
 
+      await signIn("credentials", {
+        email: user!.email,
+        password: user!.password,
+        redirect: true,
+        callbackUrl: "/",
+      });
+
     }catch(error){
-      console.log(error)
+      console.log(error);
+      show("Houve um erro.", "Por favor tente novamente :(")
     }
   }
 

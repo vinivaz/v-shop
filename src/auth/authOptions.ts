@@ -26,15 +26,14 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         
-        try {
+   
           const user = await loginUserWithEmail(credentials?.email, credentials?.password);
-          return user;
-        } catch (error) {
-          if (error instanceof Error) {
-            throw new Error(error.message);
+
+          if (!user) {
+            return null;
           }
-          throw new Error("Erro ao fazer login.");
-        }
+          return user;
+ 
       },
     }),
   ],
@@ -48,11 +47,18 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({user, account}) {
-      if (account?.provider === 'google') {
-        await findUserOrCreate(user as UserProps)
+
+      try {
+        if (account?.provider === 'google') {
+          await findUserOrCreate(user as UserProps);
+        }
+
+        return true;
+      } catch (error) {
+        console.error("Erro no callback signIn:", error);
+        return false;
       }
 
-      return true;
     },
 
     async jwt({ token, user }) {
