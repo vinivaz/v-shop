@@ -25,8 +25,7 @@ export async function GET(request: Request) {
       },
       include: {
         variations: true,
-      },
-      take: 10,
+      }
     });
 
     return NextResponse.json({data: products});
