@@ -77,3 +77,13 @@ export async function getProductBySlugServerSide(slug: string) {
 
   // return res.json();
 }
+
+export async function canUserRate(productId: string) {
+  const headersList = await headers();
+  const cookie = headersList.get("cookie");
+
+ return await fetchWithHandler<boolean>(`${rootURL}/api/products/rating/can-rate?productId=${productId}`,{
+    headers: { Cookie: cookie ?? "" },
+    cache: "no-cache"
+ });
+};

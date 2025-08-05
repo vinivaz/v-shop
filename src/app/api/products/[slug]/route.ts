@@ -18,9 +18,24 @@ export async function GET(
       include: { variations: true },
     });
 
+
     if (!product) {
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
+
+    const ratings = await prisma.rating.aggregate({
+      where: { productId: product.id },
+      _avg: { value: true },
+      _count: {
+        _all: true
+      }
+    });
+
+    const averageRating = ratings._avg.value ?? null;
+
+    const ratingCount = ratings._count._all;
+
+    console.log(ratings)
 
     const session = await getServerSession(authOptions);
 
@@ -48,7 +63,7 @@ export async function GET(
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json({data:{...product, favorite}}, { status: 200 });
+    return NextResponse.json({data:{...product, favorite, ratingCount, averageRating}}, { status: 200 });
 
   }catch(error){
     console.log(error)

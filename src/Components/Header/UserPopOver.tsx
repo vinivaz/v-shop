@@ -47,12 +47,14 @@ export function UserPopOver({session, isDev}: Props){
               <Link
                 href="/sign-in"
                 className="mx-2 flex items-center font-medium"
+                onClick={() => setOpen(false)}
               >
                 Entrar
               </Link>
               <Link
                 href="/sign-up"
                 className=" flex items-center font-medium bg-darker text-white mx-2 px-3 rounded-xl"
+                onClick={() => setOpen(false)}
               >
                 Cadastrar
               </Link>
@@ -91,6 +93,7 @@ export function UserPopOver({session, isDev}: Props){
                     <Link
                       href="/users/orders"
                       className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                      onClick={() => setOpen(false)}
                     >
                       Minhas Compras
                     </Link>
@@ -98,12 +101,16 @@ export function UserPopOver({session, isDev}: Props){
                       <Link
                         href="/dev-zone"
                         className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                        onClick={() => setOpen(false)}
                       >
                         Dev Zone
                       </Link>
                     )}
                     <button
-                      onClick={() => signOut()}
+                      onClick={() => {
+                        setOpen(false)
+                        signOut()
+                      }}
                       className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                     >
                       Sair
@@ -141,12 +148,14 @@ export function UserPopOver({session, isDev}: Props){
                     <Link
                       href="/sign-in"
                       className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                      onClick={() => setOpen(false)}
                     >
                       Entrar
                     </Link>
                     <Link
                       href="/sign-up"
                       className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                      onClick={() => setOpen(false)}
                     >
                       Cadastrar
                     </Link>

@@ -6,6 +6,7 @@ import { fetchWithHandler } from "@/lib/fetchWithHandler";
 
 import type { CartProduct } from "@/types/cart";
 import type { Product as ProductType } from "@/types/product";
+import type { RatingType } from "@/types/rating";
 type ReadyData = {
   name: string;
   category: string;
@@ -107,7 +108,7 @@ export async function setFavoriteProduct(productId: string) {
 };
 
 export async function unsetFavoriteProduct(productId: string) {
- return await fetchWithHandler<undefined>(`${rootURL}/api/products/favorites`, {
+  return await fetchWithHandler<undefined>(`${rootURL}/api/products/favorites`, {
     method: 'DELETE',
     body: JSON.stringify({productId}),
     headers: {
@@ -115,3 +116,19 @@ export async function unsetFavoriteProduct(productId: string) {
     },
   });
 };
+
+export async function getRating(productId: string) {
+ return await fetchWithHandler<RatingType | null>(`${rootURL}/api/products/rating?productId=${productId}`);
+};
+
+
+export async function createOrUpdateRating(data: {productId: string, value: number}) {
+  return await fetchWithHandler<RatingType>(`${rootURL}/api/products/rating`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
+

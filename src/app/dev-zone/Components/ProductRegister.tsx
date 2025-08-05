@@ -16,6 +16,7 @@ import { useWarningMessageStore } from "../../../../store/warningMessageStore";
 
 // Firebase Actions
 import { uploadFile, uploadMultipleImages } from "@/services/firebase/storageService";
+import RatingInput from "@/Components/RatingInput";
 
 type SelectedImage = {
   file: File;
@@ -25,13 +26,10 @@ type SelectedImage = {
 type FormData = {
   name: string,
   category: string,
-  // price: string,
-  // stock: string,
   description: string,
-  // mainImage?: SelectedImage,
-  // images: SelectedImage[],
+
   variations: {
-    // mainImage: SelectedImage,
+
     main: boolean,
     name: string,
     stock: string,
@@ -58,11 +56,9 @@ export function ProductRegister(){
   const initialFormValues = {
     name: '',
     category: 'default',
-    // price: '',
-    // stock: '',
     description: '',
     mainImage: undefined,
-    // additionalImages: [],
+
     variations: [{
       main: true,
       name: "",
@@ -86,13 +82,6 @@ export function ProductRegister(){
   const onSubmit = async(data: FormData) => {
     console.log(data)
     try{
-      // const mainImageUrl = data.mainImage
-      // ? await uploadFile(data.mainImage.file, 'product_image')
-      // : undefined;
-
-      // const additionalImageUrls = data.additionalImages
-      // ? await uploadMultipleImages(data.additionalImages, 'product_image')
-      // : [];
 
       const variations = await Promise.all(
         (data.variations || []).map(async (variation, index) => {
@@ -107,19 +96,6 @@ export function ProductRegister(){
           };
         })
       );
-
-      // const res = await fetch('/api/products', {
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     ...data,
-      //     mainImage: variations[0].images[0],
-      //     // additionalImages: additionalImageUrls,
-      //     variations
-      //   }),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
 
       const {data: registeredProduct, error} = await registerProduct({
         ...data,
@@ -151,31 +127,6 @@ export function ProductRegister(){
       className="max-w-[680px] w-full p-6 flex bg-white rounded-lg my-5"
     >
       <div className="w-full flex flex-row h-full max-[521px]:flex-col">
-        {/* <div
-          className="min-[521px]:max-w-[200px] w-full flex flex-col max-[521px]:justify-center max-[521px]:mb-7"
-        >
-          <Controller
-            name="mainImage"
-            control={control}
-            render={({ field }) => (
-              <SingleImagesSelector
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="additionalImages"
-            render={({ field }) => (
-              <ImagesSelector
-                value={field.value || []}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </div> */}
         <div
           className="flex flex-col w-full min-[521px]:pl-5"
         >
@@ -197,28 +148,7 @@ export function ProductRegister(){
             <option value="smartwatch">Smartwatch</option>
             <option value="headphone">Headphone</option>
           </SelectOptions>
-          
-          {/* <div
-            className="w-full flex flex-row gap-x-3"
-          >
-            <Input
-              label="Price"
-              placeholder="R$ 0,00"
-              type="number"
-              step="0.01"
-              min="0"
-              inputMode="decimal"
-              {...register("price")}
-            />
-            <Input
-              label="Estoque"
-              min="0"
-              step="1"
-              type="number"
-              placeholder="0"
-              {...register("stock")}
-            />
-          </div> */}
+        
           <TextArea
             label="Descrição do produto"
             placeholder="Digite os detalhes..."
@@ -236,31 +166,31 @@ export function ProductRegister(){
             )}
           />
           <Input
-                          type="text"
-                          label="Name"
-                          placeholder="ex: Black Edition"
-                          {...register(`variations.0.name`, {required:true})}
-                        />
+            type="text"
+            label="Name"
+            placeholder="ex: Black Edition"
+            {...register(`variations.0.name`, {required:true})}
+          />
 
-                        <div className="w-full flex flex-row gap-x-3">
-                          <Input
-                            label="Price"
-                            placeholder="R$ 0,00"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            inputMode="decimal"
-                            {...register(`variations.0.price`)}
-                          />
+          <div className="w-full flex flex-row gap-x-3">
+            <Input
+              label="Price"
+              placeholder="R$ 0,00"
+              type="number"
+              step="0.01"
+              min="0"
+              inputMode="decimal"
+              {...register(`variations.0.price`)}
+            />
 
-                          <Input
-                            label="Estoque"
-                            type="number"
-                            min="0"
-                            step="1"
-                            {...register(`variations.0.stock`)}
-                          />
-                        </div>
+            <Input
+              label="Estoque"
+              type="number"
+              min="0"
+              step="1"
+              {...register(`variations.0.stock`)}
+            />
+          </div>
         </div>
           
 

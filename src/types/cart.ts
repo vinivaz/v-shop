@@ -14,4 +14,6 @@ export type CartProduct = {
   variations: CartVariation[];
   selectedVariation: CartVariation;
   favorite: boolean;
+  ratingCount: number;
+  averageRating: number | null;
 };

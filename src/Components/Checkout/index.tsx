@@ -83,7 +83,8 @@ export const Checkout = () => {
               src="/icons/dark-close-icon.svg"
               height={17}
               width={17}
-              alt="close icon"/>
+              alt="close icon"
+            />
           </button>            
           
         </div>

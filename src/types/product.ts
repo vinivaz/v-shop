@@ -19,4 +19,6 @@ export type Product = {
   mainImage?: string,
   variations: Variation[];
   favorite: boolean;
+  ratingCount: number;
+  averageRating: number | null;
 }

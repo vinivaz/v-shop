@@ -142,12 +142,12 @@ export function Product({rating, data, toggleFavorite}:ProductProps){
         className="w-full flex flex-col justify-evenly p-2 rounded-b-xl min-h-[150px] bg-white"
       >
         <div className="flex flex-row w-full">
-          <div
+          {/* <div
             className="flex flex-row text-[11px]"
           >
             <RatingStars rating={rating}/>
             <span className="font-semibold">5.0 (15635)</span>
-          </div>
+          </div> */}
         </div>
         <a
           className="leading-4 font-semibold text-dark-text"

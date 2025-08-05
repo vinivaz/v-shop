@@ -10,12 +10,14 @@ import {
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 
 type Props = {
+  value: number;
   onChange: (value: number) => void;
+
 };
 
-export default function RatingInput({ onChange }: Props) {
+export default function RatingInput({ value, onChange }: Props) {
   const [hoverValue, setHoverValue] = useState<number | null>(null);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(value);
 
   const handleClick = (value: number) => {
     setRating(value);
